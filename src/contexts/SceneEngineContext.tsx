@@ -74,7 +74,11 @@ export function SceneEngineProvider({ children }: SceneEngineProviderProps) {
   const processingRef = useRef(false);
 
 
-  const agentIds = scenes[currentSceneIndex]?.agentIds;
+  const scene = scenes[currentSceneIndex]; // Current scene (tiktok stream)
+  const sceneConfig = scene.sceneConfigs[sceneConfigIndex]; // Current scene config (environment, camera, models)
+  const models = sceneConfig.models;
+  const agentIds = models.map((model: { agentId: string }) => model.agentId);
+
   console.log('agentIds: ', { agentIds })
 
 
