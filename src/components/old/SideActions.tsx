@@ -26,14 +26,14 @@ export function SideActions({
   return (
     <div className="absolute bottom-48 md:mb-[250px] right-2 flex flex-col items-center space-y-4 z-100 mb-250px">
 
-      {/* <button
+       <button
         onClick={cycleSceneConfig}
         className="flex flex-col items-center space-y-1 group"
       >
         <div className={`p-2 rounded-full bg-black/20 transition-transform duration-300 ${isLiked ? 'scale-125' : ''} z-100`}>
           <Shirt size={28} className="text-white group-hover:text-gray-300" />
         </div>
-      </button> */}
+      </button> 
 
       <button
         onClick={onLike}
