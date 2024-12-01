@@ -12,7 +12,6 @@ export const ENABLE_RECHARGE_MODAL = true
 export const AIKO_MINT = 'mdx5dxD754H8uGrz6Wc96tZfFjPqSgBvqUDbKycpump'
 
 let COIN_LOGO = '/images/coinlogo.png'
-// COIN_LOGO = 'https://cdn.discordapp.com/attachments/1307849648831991900/1308154792606175393/aikocoin.png?ex=673ce996&is=673b9816&hm=73bff987bbfecf00b6672d62223c4aafac67bf66348c5832f03e47f866d2ed58&'
 export const AIKO_AGENT_ID = ""
 
 export const SOCKET_EVENTS = {
@@ -53,34 +52,36 @@ export const GIFTS: Gift[] = [
 
 
 interface Model {
-    model: string;
-    name: string;
-    description: string;
-    agentId: string;
-    clothes: string;
-    defaultAnimation: string;
-    modelPosition: [number, number, number];
-    modelRotation: [number, number, number];
-    modelScale: [number, number, number];
+  model: string; // model file name -- must be a vrm file located in the public/models folder
+  name: string; // model name -- unused
+  description: string; // model description -- unused
+  agentId: string; // needed to set up animation/aiReply/audio handlers per model, coming in from the server
+  clothes: string; // unused
+  defaultAnimation: string; // animation to play when the model is loaded
+  modelPosition: [number, number, number]; // position of the model in the scene
+  modelRotation: [number, number, number]; // rotation of the model in the scene
+  modelScale: [number, number, number]; // scale of the model in the scene 
+  // ^ Note, adjusting modelScale might lead to some wonky behavior with the model's pivot point. 
+  // Instead, you can adjust the environmentScale to achieve the same effect.
 }
 
 export interface SceneConfig {
-    name: string;
-    description: string;
-    environmentURL: string;
+  name: string; // scene name -- unused
+  description: string; // scene description -- unused
+  environmentURL: string; // environment file name -- must be a glb file located in the public/environments folder
 
-    // Camera settings
-    cameraPosition: [number, number, number];
-    cameraRotation: number;
-    cameraPitch: number;
+  // Camera settings
+  cameraPosition: [number, number, number]; // camera position in the scene
+  cameraRotation: number; // camera rotation in the scene
+  cameraPitch: number; // camera pitch in the scene
 
-    // Environment settings
-    environmentScale: [number, number, number];
-    environmentPosition: [number, number, number];
-    environmentRotation: [number, number, number];
+  // Environment settings
+  environmentScale: [number, number, number]; // scale of the environment in the scene
+  environmentPosition: [number, number, number]; // position of the environment in the scene
+  environmentRotation: [number, number, number]; // rotation of the environment in the scene
 
-    // Array of models instead of single model config
-    models: Model[];
+  // Array of models instead of single model config
+  models: Model[];
 }
 
 // Add BGM interface extension
@@ -89,24 +90,30 @@ interface BGMConfig {
 }
 
 // Extend your existing NewStreamConfig interface
-export interface NewStreamConfig extends BGMConfig {
-    id: number;
+export interface NewStreamConfig {
+  id: number;
+  title: string;
+  agentId: string;
+  // ^ right now, when comments are sent to the server, they are sent with the agentId of the model above. (Check the mongo schema in server repo for this)
+  // This means that only the agentId specified can read these comments and, in-effect respond to them. Even if there are multiple agents in the scene.
+  // This was originally designed for one-agent-per-stream. It will work fine if that's the case.
+  // Note: In multi-agent streams This does not stop the other agents from autonomously sending responses through thoughts etc. It just means
+  // that only that agentId above can read the comments in chat and reply in this particular stream. 
+  twitter: string;
+  walletAddress: string;
+  modelName: string;
+  description: string;
+  identifier: string;
+  color: string;
+  type: string;
+  component: string;
+  bgm?: string | string[];  // Optional background music URL for the scene
+  creator: {
+    avatar: string;
     title: string;
-    agentId: string;
-    twitter: string;
-    walletAddress: string;
-    modelName: string;
-    description: string;
-    identifier: string;
-    color: string;
-    type: string;
-    component: string;
-    creator: {
-        avatar: string;
-        title: string;
-        username: string;
-    };
-    sceneConfigs: (SceneConfig & BGMConfig)[];  // Add BGM to scene configs
+    username: string;
+  };
+  sceneConfigs: (SceneConfig)[];  // Add BGM to scene configs
 }
 
 // Add BGM URL constants
@@ -155,334 +162,312 @@ export const BGM_URLS = {
 // Of course, this is far better handled through a managed flow and database. 
 
 export const NEW_STREAM_CONFIGS: NewStreamConfig[] = [
-    {
-        id: 0,
-        title: "Aiko's Stream",
-        agentId: "a9f3105f-7b14-09bd-919f-a1482637a374",  // old - agentId was the identified for each scene. Should use the scennId instead
-        agentIds: ["a9f3105f-7b14-09bd-919f-a1482637a374", "b850bc30-45f8-0041-a00a-83df46d8555d"],   // only used where scene.agentIds is needed ie SceneEngineProvider
-        twitter: "@watch_aiko",
-        modelName: "Aiko",
-        identifier: "aiko",
-        description: "My first stream!",
-        color: "#FE2C55",
-        type: "stream",
-        component: "ThreeScene",
-        walletAddress: "5voS9evDjxF589WuEub5i4ti7FWQmZCsAsyD5ucbuRqM",
-        creator: { avatar: "/images/aiko.webp", title: "Just hanging out", username: "Aiko" },
-        bgm: BGM_URLS.AIKO.DEFAULT,
-        sceneConfigs: [
-            {
-                "id": 0,
-                "name": "Cafe",
-                "environmentURL": "modern_bedroom_compressed.glb",
-                "models": [
-                  {
-                    "model": "aiko2.vrm",
-                    "agentId": "a9f3105f-7b14-09bd-919f-a1482637a374",         // model's redundantly need to store the agentId for now. this is because of the way animations are triggered via SceneEngine into ThreeScene by the model's agentId
-                    "name": "Aiko",
-                    "description": "Aiko",
-                    "clothes": "casual",
-                    "defaultAnimation": "sitting_legs_swinging",
-                    "modelPosition": [
-                      1.0999999999999999,
-                      -0.4999999999999999,
-                      -7.3000000000000185
-                    ],
-                    "modelRotation": [
-                      0,
-                      2.1000000000000005,
-                      0
-                    ],
-                    "modelScale": [
-                      0.9605960100000004,
-                      0.9605960100000004,
-                      0.9605960100000004
-                    ]
-                  },
-                  {
-                    "model": "ai16z_official.vrm",
-                    "name": "Eliza",
-                    "agentId": "b850bc30-45f8-0041-a00a-83df46d8555d",
-                    "description": "Eliza",
-                    "clothes": "casual",
-                    "defaultAnimation": "sitting_legs_swinging",
-                    "modelPosition": [
-                      1.11,
-                      -0.4999999999999999,
-                      -8.100000000000005
-                    ],
-                    "modelRotation": [
-                      0,
-                      7.799999999999988,
-                      0
-                    ],
-                    "modelScale": [
-                      0.9605960100000004,
-                      0.9605960100000004,
-                      0.9605960100000004
-                    ]
-                  }
-                ],
-                "environmentScale": [
-                  1,
-                  1,
-                  1
-                ],
-                "environmentPosition": [
-                  0,
-                  -1,
-                  -5
-                ],
-                "environmentRotation": [
-                  0,
-                  1.5707963267948966,
-                  0
-                ],
-                "cameraPitch": 0,
-                "cameraPosition": [
-                  2.86339364354024,
-                  0.749999999999999,
-                  -7.734076601144114
-                ],
-                "cameraRotation": -4.708758241001718
-              },
-              {
-                "id": 0,
-                "name": "Cafe",
-                "environmentURL": "beach2.glb",
-                "models": [
-                  {
-                    "model": "aiko_bikini.vrm",
-                    "agentId": "a9f3105f-7b14-09bd-919f-a1482637a374",
-                    "name": "Aiko",
-                    "description": "Aiko",
-                    "clothes": "casual",
-                    "defaultAnimation": "belly_dance",
-                    "modelPosition": [
-                      6.199999999999994,
-                      2.300000000000001,
-                      -8.800000000000013
-                    ],
-                    "modelRotation": [
-                      0,
-                      4.300000000000001,
-                      0
-                    ],
-                    "modelScale": [
-                      0.8645364090000004,
-                      0.8645364090000004,
-                      0.8645364090000004
-                    ]
-                  },
-                  {
-                    "model": "eliza_bikini.vrm",
-                    "agentId": "b850bc30-45f8-0041-a00a-83df46d8555d",
-                    "name": "Misaki",
-                    "description": "Misaki",
-                    "clothes": "casual",
-                    "defaultAnimation": "belly_dance",
-                    "modelPosition": [
-                      5.309999999999998,
-                      2.300000000000001,
-                      -9.5
-                    ],
-                    "modelRotation": [
-                      0,
-                      5.399999999999997,
-                      0
-                    ],
-                    "modelScale": [
-                      0.9605960100000004,
-                      0.9605960100000004,
-                      0.9605960100000004
-                    ]
-                  }
-                ],
-                "environmentScale": [
-                  1,
-                  1,
-                  1
-                ],
-                "environmentPosition": [
-                  0,
-                  -1,
-                  -5
-                ],
-                "environmentRotation": [
-                  0,
-                  1.5707963267948966,
-                  0
-                ],
-                "cameraPitch": 0,
-                "cameraPosition": [
-                  3.6836265612399948,
-                  3.450000000000001,
-                  -8.818997341372945
-                ],
-                "cameraRotation": 4.912369260617025
-              },
+  {
+    id: 0,
+    title: "Aiko's Stream",
+    agentId: "a9f3105f-7b14-09bd-919f-a1482637a374",
+    // ^ old - agentId was the identified for each scene. This should need to be sceneId or something else. 
+    // Also, right now, when comments are sent to the server, they are sent with the agentId of the model above. (Check the schema for this)
+    // This means that only that agentId can read these comments and, in-effect respond to them. Even if there are multiple agents in the scene.
+    // Note: This does not stop the other agents from autonomously sending responses through thoughts etc. It just means
+    // that only that agentId above can read the comments sent to it in this particular stream. 
+    twitter: "@watch_aiko",
+    modelName: "Aiko",
+    identifier: "aiko",
+    description: "My first stream!",
+    color: "#FE2C55",
+    type: "stream",
+    component: "ThreeScene",
+    walletAddress: "5voS9evDjxF589WuEub5i4ti7FWQmZCsAsyD5ucbuRqM", // where tips get sent to
+    creator: { avatar: "/images/aiko.webp", title: "Just hanging out", username: "Aiko" },
+    bgm: BGM_URLS.AIKO.DEFAULT,
+    sceneConfigs: [
+      {
+        "id": 0,
+        "name": "Cafe",
+        "environmentURL": "modern_bedroom_compressed.glb",
+        "models": [
+          {
+            "model": "aiko2.vrm",
+            "agentId": "a9f3105f-7b14-09bd-919f-a1482637a374",         // model's need to store the agentId for now. this is because of the way animations are triggered via SceneEngine into ThreeScene by the model's agentId
+            "name": "Aiko",
+            "description": "Aiko",
+            "clothes": "casual",
+            "defaultAnimation": "sitting_legs_swinging",
+            "modelPosition": [
+              1.0999999999999999,
+              -0.4999999999999999,
+              -7.3000000000000185
+            ],
+            "modelRotation": [
+              0,
+              2.1000000000000005,
+              0
+            ],
+            "modelScale": [
+              0.9605960100000004,
+              0.9605960100000004,
+              0.9605960100000004
+            ]
+          },
+          {
+            "model": "ai16z_official.vrm",
+            "name": "Eliza",
+            "agentId": "b850bc30-45f8-0041-a00a-83df46d8555d",
+            "description": "Eliza",
+            "clothes": "casual",
+            "defaultAnimation": "sitting_legs_swinging",
+            "modelPosition": [
+              1.11,
+              -0.4999999999999999,
+              -8.100000000000005
+            ],
+            "modelRotation": [
+              0,
+              7.799999999999988,
+              0
+            ],
+            "modelScale": [
+              0.9605960100000004,
+              0.9605960100000004,
+              0.9605960100000004
+            ]
+          }
         ],
-        stats: {
-            likes: 0,
-            comments: 0,
-            bookmarks: 0,
-            shares: 0
-        },
-    },
-    {
-        id: 2,
-        title: "ch6n9's Stream",
-        agentId: "642c7c0e-c4cd-0283-aba4-24a81f33ad5e",
-        twitter: "@ch6n9",
-        modelName: "ch6n9",
-        identifier: "ch6n9",
-        description: "Erm",
-        color: "#FE2C55",
-        type: "stream",
-        component: "ThreeScene",
-        creator: { avatar: "https://pbs.twimg.com/profile_images/1847496619627073536/pgdap09V_400x400.jpg", title: "$XD", username: "ch6n9" },
-        sceneConfigs: [
-            {
-                "name": "Cafe",
-                "description": "In the Cafe",
-                "clothes": "casual",
-                "model": "fascist.vrm",
-                "defaultAnimation": "offensive_idle",
-                "environmentURL": "fascist_compressed.glb",
-                "cameraPosition": [
-                    -0.49197685573777916,
-                    1.15,
-                    -3.8829509326554352
-                ],
-                "cameraRotation": 6.712388980384683,
-                "models": [
-                    {
-                        "model": "fascist.vrm",
-                        "name": "Eliza's Sister",
-                        "description": "Aiko",
-                        "agentId": "642c7c0e-c4cd-0283-aba4-24a81f33ad5e",
-                        "clothes": "casual",
-                        "defaultAnimation": "offensive_idle",
-                        "modelPosition": [
-                            -1.4000000000000001,
-                            -0.10000000000000003,
-                            -5.699999999999997
-                        ],
-                        "modelRotation": [
-                            0,
-                            -5.899999999999995,
-                            0
-                        ],
-                        "modelScale": [
-                            1,
-                            1,
-                            1
-                        ],
-                    },
-                ],
-
-                "environmentScale": [
-                    1.1,
-                    1.1,
-                    1.1
-                ],
-                "environmentPosition": [
-                    0,
-                    -1,
-                    -5
-                ],
-                "environmentRotation": [
-                    0,
-                    1.5707963267948966,
-                    0
-                ],
-                "cameraPitch": 0
-            },
+        "environmentScale": [
+          1,
+          1,
+          1
         ],
-        stats: {
-            likes: 0,
-            comments: 0,
-            bookmarks: 0,
-            shares: 0
-        },
-    },
-    {
-        id: 0,
-        title: "Eliza's Sister",
-        agentId: "ffc1faee-704d-0c1e-abc4-2198dfb8eda8",
-        twitter: "@elizas_sister",
-        modelName: "Eliza's Sister",
-        identifier: "elizas_sister",
-        description: "My first stream!",
-        color: "#FE2C55",
-        type: "stream",
-        component: "ThreeScene",
-        walletAddress: "9jW8FPr6BSSsemWPV22UUCzSqkVdTp6HTyPqeqyuBbCa",
-        creator: { avatar: "https://pbs.twimg.com/media/Gcsy01RXMAA0qJN?format=jpg&name=medium", title: "Just hanging out", username: "Eliza's Sister" },
-        sceneConfigs: [
-            {
-                "name": "Cafe",
-                "description": "In the Cafe",
-                "model": "elizas_sister.vrm",
-                "environmentURL": "vintage_living_room.glb",
-                "defaultAnimation": "idle-2",
-                "cameraPosition": [
-                    -0.7721811808910457,
-                    0.24999999999999908,
-                    -6.00940837921829
-                ],
-                "cameraRotation": 4.0287963267948985,
-                "models": [
-                    {
-                        "model": "elizas_sister.vrm",
-                        "name": "Eliza's Sister",
-                        "description": "Aiko",
-                        "agentId": "ffc1faee-704d-0c1e-abc4-2198dfb8eda8",
-                        "clothes": "casual",
-                        "defaultAnimation": "idle-2",
-                        "modelPosition": [
-                            0.2000000000000007,
-                            -0.8999999999999999,
-                            -5.200000000000026
-                        ],
-                        "modelRotation": [
-                            0,
-                            4.000000000000002,
-                            0
-                        ],
-                        "modelScale": [
-                            0.9605960100000004,
-                            0.9605960100000004,
-                            0.9605960100000004
-                        ],
-                    },
-                ],
-                "environmentScale": [
-                    0.8,
-                    0.8,
-                    0.8
-                ],
-                "environmentPosition": [
-                    0,
-                    -1,
-                    -5
-                ],
-                "environmentRotation": [
-                    0,
-                    1.5707963267948966,
-                    0
-                ],
-                "cameraPitch": 0
-            },
+        "environmentPosition": [
+          0,
+          -1,
+          -5
         ],
-        stats: {
-            likes: 0,
-            comments: 0,
-            bookmarks: 0,
-            shares: 0
-        },
+        "environmentRotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "cameraPitch": 0,
+        "cameraPosition": [
+          2.86339364354024,
+          0.749999999999999,
+          -7.734076601144114
+        ],
+        "cameraRotation": -4.708758241001718
+      },
+      {
+        "id": 0,
+        "name": "Cafe",
+        "environmentURL": "modern_bedroom_compressed.glb",
+        "models": [
+          {
+            "model": "aiko2.vrm",
+            "agentId": "a9f3105f-7b14-09bd-919f-a1482637a374",         // model's redundantly need to store the agentId for now. this is because of the way animations are triggered via SceneEngine into ThreeScene by the model's agentId
+            "name": "Aiko",
+            "description": "Aiko",
+            "clothes": "casual",
+            "defaultAnimation": "sitting_legs_swinging",
+            "modelPosition": [
+              1.0999999999999999,
+              -0.4999999999999999,
+              -7.3000000000000185
+            ],
+            "modelRotation": [
+              0,
+              2.1000000000000005,
+              0
+            ],
+            "modelScale": [
+              0.9605960100000004,
+              0.9605960100000004,
+              0.9605960100000004
+            ]
+          },
+        ],
+        "environmentScale": [
+          1,
+          1,
+          1
+        ],
+        "environmentPosition": [
+          0,
+          -1,
+          -5
+        ],
+        "environmentRotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "cameraPitch": 0,
+        "cameraPosition": [
+          2.86339364354024,
+          0.749999999999999,
+          -7.734076601144114
+        ],
+        "cameraRotation": -4.708758241001718
+      },
+    ],
+    stats: {
+      likes: 0,
+      comments: 0,
+      bookmarks: 0,
+      shares: 0
     },
+  },
+  {
+    id: 2,
+    title: "ch6n9's Stream",
+    agentId: "642c7c0e-c4cd-0283-aba4-24a81f33ad5e",
+    twitter: "@ch6n9",
+    modelName: "ch6n9",
+    identifier: "ch6n9",
+    description: "Erm",
+    color: "#FE2C55",
+    type: "stream",
+    component: "ThreeScene",
+    creator: { avatar: "https://pbs.twimg.com/profile_images/1847496619627073536/pgdap09V_400x400.jpg", title: "$XD", username: "ch6n9" },
+    sceneConfigs: [
+      {
+        "name": "Cafe",
+        "description": "In the Cafe",
+        "environmentURL": "fascist_compressed.glb",
+        "models": [
+          {
+            "model": "fascist.vrm",
+            "name": "Eliza's Sister",
+            "description": "Aiko",
+            "agentId": "642c7c0e-c4cd-0283-aba4-24a81f33ad5e",
+            "clothes": "casual",
+            "defaultAnimation": "offensive_idle",
+            "modelPosition": [
+              -1.4000000000000001,
+              -0.10000000000000003,
+              -5.699999999999997
+            ],
+            "modelRotation": [
+              0,
+              -5.899999999999995,
+              0
+            ],
+            "modelScale": [
+              1,
+              1,
+              1
+            ],
+          },
+        ],
+        "cameraPosition": [
+          -0.49197685573777916,
+          1.15,
+          -3.8829509326554352
+        ],
+        "cameraRotation": 6.712388980384683,
+        "environmentScale": [
+          1.1,
+          1.1,
+          1.1
+        ],
+        "environmentPosition": [
+          0,
+          -1,
+          -5
+        ],
+        "environmentRotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "cameraPitch": 0
+      },
+    ],
+    stats: {
+      likes: 0,
+      comments: 0,
+      bookmarks: 0,
+      shares: 0
+    },
+  },
+  {
+    id: 0,
+    title: "Eliza's Sister",
+    agentId: "ffc1faee-704d-0c1e-abc4-2198dfb8eda8",
+    twitter: "@elizas_sister",
+    modelName: "Eliza's Sister",
+    identifier: "elizas_sister",
+    description: "My first stream!",
+    color: "#FE2C55",
+    type: "stream",
+    component: "ThreeScene",
+    walletAddress: "9jW8FPr6BSSsemWPV22UUCzSqkVdTp6HTyPqeqyuBbCa",
+    creator: { avatar: "https://pbs.twimg.com/media/Gcsy01RXMAA0qJN?format=jpg&name=medium", title: "Just hanging out", username: "Eliza's Sister" },
+    sceneConfigs: [
+      {
+        "name": "Cafe",
+        "description": "In the Cafe",
+        "model": "elizas_sister.vrm",
+        "environmentURL": "vintage_living_room.glb",
+        "defaultAnimation": "idle-2",
+        "cameraPosition": [
+          -0.7721811808910457,
+          0.24999999999999908,
+          -6.00940837921829
+        ],
+        "cameraRotation": 4.0287963267948985,
+        "models": [
+          {
+            "model": "elizas_sister.vrm",
+            "name": "Eliza's Sister",
+            "description": "Aiko",
+            "agentId": "ffc1faee-704d-0c1e-abc4-2198dfb8eda8",
+            "clothes": "casual",
+            "defaultAnimation": "idle-2",
+            "modelPosition": [
+              0.2000000000000007,
+              -0.8999999999999999,
+              -5.200000000000026
+            ],
+            "modelRotation": [
+              0,
+              4.000000000000002,
+              0
+            ],
+            "modelScale": [
+              0.9605960100000004,
+              0.9605960100000004,
+              0.9605960100000004
+            ],
+          },
+        ],
+        "environmentScale": [
+          0.8,
+          0.8,
+          0.8
+        ],
+        "environmentPosition": [
+          0,
+          -1,
+          -5
+        ],
+        "environmentRotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "cameraPitch": 0
+      },
+    ],
+    stats: {
+      likes: 0,
+      comments: 0,
+      bookmarks: 0,
+      shares: 0
+    },
+  },
 ]
+
 
 
 // SCENES
