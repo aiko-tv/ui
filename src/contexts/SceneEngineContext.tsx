@@ -52,7 +52,7 @@ const isValidUrl = (url: string): boolean => {
 
 export function SceneEngineProvider({ children }: SceneEngineProviderProps) {
   const { socket } = useSocket();
-  const { currentAgentId, scenes, currentSceneIndex } = useScene();
+  const { currentAgentId, scenes, currentSceneIndex, sceneConfigIndex } = useScene();
 
 
   // AI Response
