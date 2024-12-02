@@ -1,7 +1,7 @@
-// export const SOCKET_URL = 'ws://localhost:6969'
-// export const API_URL = 'http://localhost:6969'
-export const SOCKET_URL = 'https://vrtok-server-production.up.railway.app'
-export const API_URL = 'https://vrtok-server-production.up.railway.app'
+export const SOCKET_URL = 'ws://localhost:6969'
+export const API_URL = 'http://localhost:6969'
+//export const SOCKET_URL = 'https://vrtok-server-production.up.railway.app'
+//export const API_URL = 'https://vrtok-server-production.up.railway.app'
 
 
 export const SOLANA_RPC_URL = "https://solana-mainnet.g.alchemy.com/v2/vb8vZOP3L-Y76zj43AyhCmkKm7D6wEsx"
@@ -48,8 +48,12 @@ export const GIFTS: Gift[] = [
   // { id: 'scarecrow', name: 'Scarecrow', coins: 5000, icon: '🎭' },
 ];
 
-
-
+interface Stats {
+  likes: number;
+  comments: number;
+  bookmarks: number;
+  shares: number;
+}
 
 interface Model {
   model: string; // model file name -- must be a vrm file located in the public/models folder
@@ -66,6 +70,7 @@ interface Model {
 }
 
 export interface SceneConfig {
+
   name: string; // scene name -- unused
   description: string; // scene description -- unused
   environmentURL: string; // environment file name -- must be a glb file located in the public/environments folder
@@ -94,6 +99,7 @@ export interface NewStreamConfig {
   id: number;
   title: string;
   agentId: string;
+  sceneId: string;
   // ^ right now, when comments are sent to the server, they are sent with the agentId of the model above. (Check the mongo schema in server repo for this)
   // This means that only the agentId specified can read these comments and, in-effect respond to them. Even if there are multiple agents in the scene.
   // This was originally designed for one-agent-per-stream. It will work fine if that's the case.
@@ -113,6 +119,7 @@ export interface NewStreamConfig {
     title: string;
     username: string;
   };
+  stats: Stats;
   sceneConfigs: (SceneConfig)[];  // Add BGM to scene configs
 }
 
@@ -159,9 +166,10 @@ export const BGM_URLS = {
 
 // Swap in models and environemts as needed.
 
-// Of course, this is far better handled through a managed flow and database. 
+// Of course, this is far better handled through a managed flow and database.
 
-export const NEW_STREAM_CONFIGS: NewStreamConfig[] = [
+
+const NEW_STREAM_CONFIGS: NewStreamConfig[] = [
   {
     id: 0,
     title: "Aiko's Stream",
@@ -467,7 +475,6 @@ export const NEW_STREAM_CONFIGS: NewStreamConfig[] = [
     },
   },
 ]
-
 
 
 // SCENES

@@ -15,8 +15,8 @@ import {
 import { loadMixamoAnimation } from '../old/loadMixamoAnimation.js';
 import { useScene } from '../../contexts/ScenesContext.js';
 // import Note from '../Note';
-
-import { getAnimationUrl, getEnvironmentUrl, getModelUrl } from '../../utils/constants';
+import axios from 'axios';
+import { getAnimationUrl, getEnvironmentUrl, getModelUrl, API_URL } from '../../utils/constants';
 import { useSceneEngine } from '../../contexts/SceneEngineContext.js';
 import { SceneConfig } from '../../utils/constants.js';
 
@@ -114,10 +114,11 @@ export function ThreeScene({ debugMode }: { debugMode: boolean }) {
   const nextAnimationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { animation, animationFile } = useSceneEngine();
-  const { newScenes, activeScene, sceneConfigIndex } = useScene();
+  const { newScenes, activeScene, sceneConfigIndex, currentAgentId } = useScene();
   const scene = newScenes[activeScene];
 
   const activeSceneConfig: SceneConfig = useMemo(() => scene?.sceneConfigs[sceneConfigIndex], [scene, sceneConfigIndex])
+
   const environmentUrl = activeSceneConfig?.environmentURL
 
   const models = activeSceneConfig?.models || [];
@@ -129,7 +130,7 @@ export function ThreeScene({ debugMode }: { debugMode: boolean }) {
 
   // This is the index of the model we are currently using (editor)
   const [selectedModelIndex, setSelectedModelIndex] = useState<number>(0);
-  const currentModel = getModelUrl(models[selectedModelIndex].model);
+  //const currentModel = getModelUrl(models[selectedModelIndex].model);
 
   // Add camera position state
   const [cameraPosition, setCameraPosition] = useState<[number, number, number]>(sceneConfig.cameraPosition);
@@ -453,6 +454,7 @@ export function ThreeScene({ debugMode }: { debugMode: boolean }) {
 
   // Add this helper function at the component level
   const logSceneConfig = () => {
+    
     const currentConfig = {
       id: activeSceneConfig.id,
       name: activeSceneConfig.name,
@@ -686,6 +688,57 @@ export function ThreeScene({ debugMode }: { debugMode: boolean }) {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [debugMode, models, selectedModelIndex, cameraPosition, cameraPitch, cameraRotation]);
+
+  // useEffect to update the agent's sceneConfig in the database
+  useEffect(() => {
+    const updateSceneConfigInDB = async () => {
+      if (!activeSceneConfig) return;
+
+      const currentConfig = {
+        id: activeSceneConfig.id,
+        name: activeSceneConfig.name,
+        environmentURL: environmentUrl,
+        models: models.map((model, index) => ({
+          ...model,
+          modelPosition: modelPositionsRef.current[index] || model.modelPosition,
+          modelRotation: modelRotationsRef.current[index] || model.modelRotation,
+          modelScale: modelRefs.current[index]?.scale.toArray() || model.modelScale,
+        })),
+        environmentScale: sceneConfig.environmentScale,
+        environmentPosition: sceneConfig.environmentPosition,
+        environmentRotation: sceneConfig.environmentRotation,
+        cameraPitch,
+        cameraPosition,
+        cameraRotation,
+      };
+
+      try {
+        const controller = new AbortController(); // Create an AbortController
+        // PUT request to update the scene config use current AgentId
+        fetch(`${API_URL}/api/scenes/${currentAgentId}`, { signal: controller.signal, method: 'PUT', body: JSON.stringify(currentConfig) }) // Pass the signal to fetch
+          .then(response => response.json())
+          .then(data => {
+            console.log('saved scene config to db', {data})
+          })
+          .catch(error => {
+            if (error.name === 'AbortError') {
+              console.log('Fetch aborted'); // Handle fetch abort
+            } else {
+              console.error('Fetch error:', error); // Handle other errors
+            }
+          });
+
+        return () => {
+          controller.abort(); // Cleanup function to abort fetch on unmount
+        };
+        
+      } catch (error) {
+        console.error("Error updating scene configuration:", error);
+      }
+    };
+
+    updateSceneConfigInDB();
+  }, [sceneConfig]); // Run this effect whenever sceneConfig changes
 
   useEffect(() => {
     if (activeSceneConfig) {
