@@ -1,8 +1,5 @@
-export const SOCKET_URL = 'ws://aiko-server-production-52ab.up.railway.app'
-export const API_URL = 'https://aiko-server-production-52ab.up.railway.app'
-//export const SOCKET_URL = 'https://vrtok-server-production.up.railway.app'
-//export const API_URL = 'https://vrtok-server-production.up.railway.app'
-
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+export const API_URL = import.meta.env.VITE_API_URL;
 
 export const SOLANA_RPC_URL = "https://solana-mainnet.g.alchemy.com/v2/vb8vZOP3L-Y76zj43AyhCmkKm7D6wEsx"
 
