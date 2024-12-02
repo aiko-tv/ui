@@ -1,5 +1,5 @@
-export const SOCKET_URL = 'ws://localhost:6969'
-export const API_URL = 'http://localhost:6969'
+export const SOCKET_URL = 'ws://aiko-server-production-52ab.up.railway.app'
+export const API_URL = 'https://aiko-server-production-52ab.up.railway.app'
 //export const SOCKET_URL = 'https://vrtok-server-production.up.railway.app'
 //export const API_URL = 'https://vrtok-server-production.up.railway.app'
 
