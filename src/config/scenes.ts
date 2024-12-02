@@ -12,6 +12,7 @@ export interface SceneConfig {
     id: number;
     title: string;
     agentId: string;
+    sceneId: string;
     twitter: string;
     description: string;
     color: string;
@@ -83,9 +84,10 @@ export const scenesConfig: SceneConfig[] = [
         id: 0,
         title: "Default Scene",
         agentId: "b850bc30-45f8-0041-a00a-83df46d8555d",
+        sceneId: "37b07899-5b75-4ab8-ae44-f8cb6ecaa24f",
         twitter: "@defaultscene",
-        model: 'https://bafybeibgfj5zr3wtmbl6hgx5kuc4suiledti3ozkhydt2mitmkpq7iqbwm.ipfs.flk-ipfs.xyz/models/Misaki.vrm',
         modelName: 'default',
+        identifier: 'default',
         description: "Interactive Scene",
         color: "#FE2C55",
         type: 'stream',

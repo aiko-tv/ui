@@ -3,7 +3,7 @@ import { type SceneConfig } from '../config/scenes';
 import { useSocket } from '../hooks/useSocket';
 import { useUser } from './UserContext';
 import axios from 'axios';
-import { API_URL, NEW_STREAM_CONFIGS, StreamConfig, STREAMER_ADDRESS, NewStreamConfig } from '../utils/constants';
+import { API_URL, NEW_STREAM_CONFIGS, STREAMER_ADDRESS, NewStreamConfig } from '../utils/constants';
 import { useSceneManager } from '../hooks/useSceneManager';
 import { useTopGifters } from '../hooks/useGiftsApi';
 import { useGiftNotifications } from '../hooks/useGiftNotifications';
@@ -51,7 +51,7 @@ interface SceneContextType {
   currentAgentId: string;
   nextAgentId: string;
   prevAgentId: string;
-  scenes: StreamConfig[]; // TODO: moving off this
+  //scenes: StreamConfig[]; // TODO: moving off this
   newScenes: NewStreamConfig[];
   setCurrentAgentId: (agentId: string) => void;
   updateSceneStats: (agentId: string, key: keyof SceneStats) => void;
@@ -106,16 +106,40 @@ const FAKE_BADGES = [
 
 
 
+
+
 export function SceneProvider({ children }: { children: ReactNode }) {
   const { scenes: fetchedScenes, isLoading, error, refreshScenes } = useSceneManager();
+  const [data, setData] = useState<NewStreamConfig[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // const scenes = useMemo(() => STREAM_CONFIGS, [])
-  const newScenes: NewStreamConfig[] = useMemo(() => NEW_STREAM_CONFIGS, [])
-  const scenes: NewStreamConfig[] = useMemo(() => NEW_STREAM_CONFIGS, [])
+  useEffect(() => {
+    const controller = new AbortController(); // Create an AbortController
+    setLoading(true);
+    fetch(`${API_URL}/api/scenes`, { signal: controller.signal }) // Pass the signal to fetch
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        if (error.name === 'AbortError') {
+          console.log('Fetch aborted'); // Handle fetch abort
+        } else {
+          console.error('Fetch error:', error); // Handle other errors
+        }
+      });
 
-
-  const { data: newScenesnew } = useScenesQuery();
-  console.log({newScenesnew})
+    return () => {
+      controller.abort(); // Cleanup function to abort fetch on unmount
+    };
+  }, []);
+  console.log('api data', {data});
+  const newScenes = useMemo(() => {
+    return !loading && Array.isArray(data) ? data : [];
+  }, [loading, data]);
+  
+  console.log('newScenes useMemo', {newScenes});
 
 
   const { emit, socket } = useSocket();
@@ -138,35 +162,38 @@ export function SceneProvider({ children }: { children: ReactNode }) {
     newScenes.findIndex(newScene => newScene.agentId === currentAgentId),
     [newScenes, currentAgentId]
   );
-
+  console.log('getCurrentSceneIndex:', getCurrentSceneIndex())
   const nextAgentId = useMemo(() =>
-    newScenes[(getCurrentSceneIndex() + 1) % newScenes.length].agentId,
+    newScenes[(getCurrentSceneIndex() + 1) % newScenes.length]?.agentId,
     [newScenes, getCurrentSceneIndex]
-  );
-
+  );  
+  console.log('nextAgentId:', nextAgentId)
   const prevAgentId = useMemo(() =>
-    newScenes[(getCurrentSceneIndex() - 1 + newScenes.length) % newScenes.length].agentId,
+    newScenes[(getCurrentSceneIndex() - 1 + newScenes.length) % newScenes.length]?.agentId,
     [newScenes, getCurrentSceneIndex]
   );
-
+  console.log('prevAgentId:', prevAgentId)
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
+  console.log('currentSceneIndex:', currentSceneIndex)
   const [activeScene, setActiveScene] = useState<number>(0);
-
+  console.log('activeScene:', activeScene)
   // Scene configs (clothes etc)
   const [sceneConfigIndex, setSceneConfigIndex] = useState(0);
-
+  console.log('sceneConfigIndex:', sceneConfigIndex)
   const swapSceneConfig = (index: number) => {
     setSceneConfigIndex(index);
   }
-
-  const availableSceneConfigs = useMemo(() => newScenes[currentSceneIndex].sceneConfigs, [newScenes, currentSceneIndex]);
-  const availableClothes = useMemo(() => availableSceneConfigs.map(sceneConfig => sceneConfig.clothes), [availableSceneConfigs]);
+  console.log('swapSceneConfig:', swapSceneConfig)
+  const availableSceneConfigs = useMemo(() => newScenes[currentSceneIndex]?.sceneConfigs, [newScenes, currentSceneIndex]);
+  console.log('availableSceneConfigs:', availableSceneConfigs)
+  const availableClothes = useMemo(() => availableSceneConfigs?.map(sceneConfig => sceneConfig.clothes), [availableSceneConfigs]);
+  console.log('availableClothes:', availableClothes)
   // console.log({ availableSceneConfigs, availableClothes })
 
   const cycleSceneConfig = useCallback(() => {
     // console.log('cycling scene config', availableSceneConfigs.length)
     setSceneConfigIndex(prevIndex => (prevIndex + 1) % availableSceneConfigs.length);
-  }, [availableSceneConfigs.length]);
+  }, [availableSceneConfigs?.length]);
   
 
   const swapSceneConfigByClothes = useCallback((clothesName: string) => {
