@@ -26,6 +26,38 @@ export function ProfileModal() {
   const [error, setError] = useState('');
   const [balance, setBalance] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!handle.trim()) {
+      setError('Handle is required');
+      return;
+    }
+
+    if (handle.length < 3) {
+      setError('Handle must be at least 3 characters');
+      return;
+    }
+
+    updateProfile({
+      handle: handle.trim(),
+      pfp: selectedFile ? selectedFile : pfp, // Pass the image URL or base64 data here
+      isUploading: selectedFile ? true : false,
+    });
+
+    setShowProfileModal(false);
+  };
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -43,26 +75,6 @@ export function ProfileModal() {
     const interval = setInterval(fetchBalance, 10000);
     return () => clearInterval(interval);
   }, [publicKey, connection]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!handle.trim()) {
-      setError('Handle is required');
-      return;
-    }
-
-    if (handle.length < 3) {
-      setError('Handle must be at least 3 characters');
-      return;
-    }
-
-    updateProfile({
-      handle: handle.trim(),
-      pfp
-    });
-    setShowProfileModal(false);
-  };
 
   const copyAddress = async () => {
     if (publicKey) {
@@ -177,12 +189,23 @@ export function ProfileModal() {
                   />
                 </button>
               ))}
-              <button
-                type="button"
-                className="aspect-square rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-gray-400 dark:hover:border-gray-500"
-              >
-                <Upload size={24} className="text-gray-400 dark:text-gray-500" />
-              </button>
+              <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-gray-400 dark:hover:border-gray-500">
+              <input
+                  id="upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleSelectFile}
+                />
+                {selectedFile ? (
+                  <img src={preview || ''} alt="Uploaded preview" className="w-full h-full object-cover rounded-lg" />
+                ) : (
+                  <button
+                    type="button">
+                  <Upload size={24} className="text-gray-400 dark:text-gray-500" />
+                </button>
+                )}
+              </label>
             </div>
           </div>
 

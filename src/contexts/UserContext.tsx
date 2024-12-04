@@ -6,7 +6,8 @@ import { API_URL } from '../utils/constants';
 
 interface UserProfile {
   handle: string;
-  pfp: string;
+  pfp: string | File | null; 
+  isUploading: boolean;
 }
 
 interface UserContextType {
@@ -73,47 +74,60 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = async (profile: UserProfile) => {
     if (!publicKey) return;
-
+    console.log('profile', profile);
+  
     try {
-      // First, try to fetch the existing profile
+      const formData = new FormData();
+      formData.append('publicKey', publicKey.toString());
+      formData.append('handle', profile.handle);
+      formData.append('isUploading', JSON.stringify(profile.isUploading));
+  
+      // If the profile picture is a File object, append it to FormData
+      if (profile.isUploading && profile.pfp) {
+        // console.log('Uploading File:', profile.pfp);
+        formData.append('image', profile.pfp as File); // Directly append the file
+      } else if (profile.pfp && typeof profile.pfp === 'string') {
+        // If pfp is a string (URL or base64), append it as well
+        formData.append('image', profile.pfp);
+      }
+  
+      // First, check if the profile already exists
       const checkResponse = await fetch(`${API_URL}/api/user-profile/${publicKey.toString()}`);
       const method = checkResponse.status === 404 ? 'POST' : 'PUT';
-      const endpoint = method === 'POST' 
+      const endpoint = method === 'POST'
         ? `${API_URL}/api/user-profile`
         : `${API_URL}/api/user-profile/${publicKey.toString()}`;
-
+  
       const response = await fetch(endpoint, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          // Don't set 'Content-Type' manually, let the browser handle it for FormData
         },
-        body: JSON.stringify({
-          ...profile,
-          publicKey: publicKey.toString(),
-        }),
+        body: formData, // Send FormData with the file and other data
       });
-
+  
       if (!response.ok) {
         if (response.status === 409) {
           throw new Error('Handle already taken');
         }
         throw new Error('Failed to update profile');
       }
-
+  
       const updatedProfile = await response.json();
       setUserProfile(updatedProfile);
       setShowProfileModal(false);
-      
+  
       // Refetch profile data to ensure consistency
       refetch();
     } catch (error) {
       console.error('Error updating profile:', error);
-      const errorMessage = error.message === 'Handle already taken' 
+      const errorMessage = error.message === 'Handle already taken'
         ? 'This handle is already taken. Please choose another one.'
         : 'Failed to update profile';
       window.showToast?.(errorMessage, 'error');
     }
-  };
+  };  
 
   return (
     <UserContext.Provider
