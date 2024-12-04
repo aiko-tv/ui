@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { API_URL } from '../utils/constants.ts';
 import axios from 'axios'; // Add axios for making HTTP requests
 import { toast } from 'sonner';
+import { Info, Sparkles } from 'lucide-react';
 
 
 export const OnboardPage = () => {
@@ -18,11 +19,11 @@ export const OnboardPage = () => {
     event.preventDefault(); // Prevent default form submission
     // Basic validation
     if (!agentId) {
-        toast.error('Agent ID is required!');
+        window.showToast('Agent ID is required!', 'error');
         return;
     }
     if (!file) {
-        toast.error('Please select a file to upload!');
+        window.showToast('Please select a file to upload!', 'error');
         return;
     }
 
@@ -39,13 +40,14 @@ export const OnboardPage = () => {
         },
       });
       console.log('Upload successful:', response.data);
-
+      window.showToast('Upload successful!', 'success');
       setAgentId(''); 
       setFile(null); 
       setEnvironmentSetting('modern_bedroom_compressed.glb'); 
 
     } catch (error) {
       console.error('Error uploading VRM:', error);
+      window.showToast('Error uploading VRM!', 'error');
     }
   };
 
@@ -84,25 +86,46 @@ export const OnboardPage = () => {
                     placeholder="Enter Agent ID"
                     value={agentId}
                     onChange={(e) => setAgentId(e.target.value)}
-                    className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded bg-transparent"
+                    className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg bg-transparent"
                   />
-                  <select
-                    value={environmentSetting}
-                    onChange={(e) => setEnvironmentSetting(e.target.value)}
-                    className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded select-none"
-                  >
-                    <option value={environmentSetting}>{environmentSetting}</option>
+
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg"
+                  />
                   
-                  </select>
                 </div>
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded"
-                />
+                <div className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <label className="text-md mb-4">
+                        Select an environment
+                    </label>
+                  </div>
+                  <div className="grid lg:grid-cols-4 grid-cols-1 gap-4">
+                    <div 
+                      className={`relative cursor-pointer border-2 rounded-xl overflow-hidden ${environmentSetting === 'modern_bedroom_compressed.glb' ? 'border-[#fe2c55]' : 'border-transparent'}`}
+                      onClick={() => setEnvironmentSetting('modern_bedroom_compressed.glb')}
+                    >
+                      <img 
+                        src="https://aiko-tv.b-cdn.net/images/modern_bedroom_compressed.png" // Bedroom image
+                        alt="Modern Bedroom"
+                        className="w-full h-full rounded-lg"
+                      />
+                      
+                    </div>
+                    {/* Placeholder skeleton outline for future images */}
+                    <div className="relative rounded-lg h-32 dark:bg-gray-600 bg-neutral-200">
+                      <div className="absolute inset-0 flex items-center justify-center text-center text-sm p-2 dark:text-neutral-100 text-neutral-900">
+                        More environments coming soon!
+                      </div>
+                    </div>
+                   
+                  </div>
+                </div>
                 <button 
                   type="submit" // Add a submit button
-                  className="bg-[#fe2c55] text-white p-3 rounded"
+                  className="bg-[#fe2c55] text-white p-3 rounded-lg"
                 >
                   Submit
                 </button>
@@ -110,6 +133,24 @@ export const OnboardPage = () => {
             </section>
           </div>
         </form>
+        <div className="mt-12">
+            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2 text-[#fe2c55]">
+                <Sparkles className="text-[#fe2c55]" size={20} />
+                Onboarding
+            </h2>
+            <div className="bg-neutral-50 dark:bg-neutral-800 p-6 border border-[#fe2c55]/20 mx-auto mt-4 rounded-lg">
+                <div className="flex items-center gap-3 mb-4">
+                    <Info className="text-[#fe2c55]" size={20} />
+                    <h3 className="text-lg font-medium text-[#fe2c55]">Follow these steps to onboard your Eliza agent</h3>
+                </div>
+                <ol className="text-neutral-700 dark:text-neutral-300 list-decimal pl-5">
+                    <li>Enter your agent ID from your Eliza repo.</li>
+                    <li>Please upload a VRM file that is compatible with the Aiko platform.</li>
+                    <li>Select an environment for your agent to live in.</li>
+                    <li>Submit and watch your agent come to life!</li>
+                </ol>
+            </div>
+        </div>
       </div>
     </div>
   );
