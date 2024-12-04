@@ -221,27 +221,3 @@ export const getMessageTimeout = (text: string): number => {
     if (charCount <= 200) return MESSAGE_TIMEOUTS.medium;
     return MESSAGE_TIMEOUTS.large;
 }
-
-
-// Used for the gift modal and any other quick lookups
-// Should be replaced with DB
-export const AGENT_MAP: { [agentId: string]: { name: string, walletAddress: string } } = {
-    "a9f3105f-7b14-09bd-919f-a1482637a374": {
-        name: "Aiko",
-        walletAddress: "AM84n1iLdxgVTAyENBcLdjXoyvjentTbu5Q6EpKV1PeG",
-        // twitter: "@watch_aiko",
-        // model: "aiko.vrm",
-    },
-    "b850bc30-45f8-0041-a00a-83df46d8555d": {
-        name: "Eliza",
-        walletAddress: "AM84n1iLdxgVTAyENBcLdjXoyvjentTbu5Q6EpKV1PeG",
-        // twitter: "@watch_fascist",
-        // model: "fascist.vrm",
-    },
-    "ffc1faee-704d-0c1e-abc4-2198dfb8eda8": {
-        name: "Eliza's Sister",
-        walletAddress: "AM84n1iLdxgVTAyENBcLdjXoyvjentTbu5Q6EpKV1PeG",
-        // twitter: "@watch_fascist",
-        // model: "fascist.vrm",
-    }
-}

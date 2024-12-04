@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSceneEngine } from '../../contexts/SceneEngineContext';
-import { AGENT_MAP } from '../../utils/constants';
+import { API_URL } from '../../utils/constants';
 
 export default function AIResponseDisplay() {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const { currentResponse, audioRef } = useSceneEngine();
+  const [agentMap, setAgentMap] = useState<{ [agentId: string]: { name: string, walletAddress: string } }>({});
 
   // Add this to determine position based on response ID
   const isRightSide = React.useMemo(() => {
@@ -33,8 +34,15 @@ export default function AIResponseDisplay() {
     };
   }, [currentResponse?.id]);
 
-
-
+  useEffect(() => {
+    // get agent map from API
+    const getAgentMap = async () => {
+      const response = await fetch(`${API_URL}/api/agents`);
+      const data = await response.json();
+      setAgentMap(data);
+    };
+    getAgentMap();
+  }, []);
 
   const getReplyTypeText = () => {
     if (currentResponse?.isGiftResponse) return "'s gift";
@@ -45,7 +53,7 @@ export default function AIResponseDisplay() {
   if (!currentResponse?.text || !shouldRender) return <></>;
 
   const { text, replyToUser: replyTo, replyToMessage, replyToHandle, replyToPfp, isGiftResponse, agentId } = currentResponse;
-  const agentName = agentId ? AGENT_MAP[agentId]?.name : '';
+  const agentName = agentId ? agentMap[agentId]?.name : '';
 
   const isReplyToMessage = replyToMessage && replyToMessage.length > 0;
 
