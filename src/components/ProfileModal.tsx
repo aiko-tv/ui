@@ -4,15 +4,16 @@ import { useUser } from '../contexts/UserContext';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { CDN_URL } from '../utils/constants';
 
 const DEFAULT_PFPS = [
-  '/pfp_blue.png',
-  '/pfp_green.png',
-  '/pfp_orange.png',
-  '/pfp_pink.png',
-  '/pfp_red.png',
-  '/pfp_violet.png',
-  '/pfp_yellow.png',
+  `${CDN_URL}images/pfp_blue.png`,
+  `${CDN_URL}images/pfp_green.png`,
+  `${CDN_URL}images/pfp_orange.png`,
+  `${CDN_URL}images/pfp_pink.png`,
+  `${CDN_URL}images/pfp_red.png`,
+  `${CDN_URL}images/pfp_violet.png`,
+  `${CDN_URL}images/pfp_yellow.png`,
 ];
 
 

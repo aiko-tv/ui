@@ -10,7 +10,7 @@ import { useUser } from '../contexts/UserContext';
 import { RechargeModal } from './RechargeModal';
 import { TerminalOverlay } from './TerminalOverlay';
 import { useGiftModal } from '../contexts/GiftContext';
-import { AIKO_MINT, COIN_LOGO } from '../utils/constants';
+import { AIKO_MINT, COIN_LOGO, CDN_URL } from '../utils/constants';
 import { useTokenBalance } from '../hooks/useTokenBalance';
 
 interface HeaderProps {
@@ -56,7 +56,7 @@ export function Header({ onMenuClick }: HeaderProps) {
             className="w-16 h-6 brightness-0 dark:brightness-100"
           />
           <img
-            src="/bow2.svg"
+            src={`${CDN_URL}/images/bow2.svg`}
             alt="TV Logo"
             className="w-8 h-8 "
           />

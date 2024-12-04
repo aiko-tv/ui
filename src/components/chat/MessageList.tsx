@@ -1,6 +1,7 @@
 import React from 'react';
 import { Message } from '../types';
 import { Bot, User } from 'lucide-react';
+import { CDN_URL } from '../../utils/constants';
 
 interface MessageListProps {
   messages: Message[];
@@ -20,7 +21,7 @@ export function MessageList({ messages }: MessageListProps) {
             <div className="mt-1 flex-shrink-0">
               {message.role === 'assistant' ? (
                 <div className="w-8 h-8 bg-pink rounded-full flex items-center justify-center">
-                  <img src="/bow-white.svg" alt="Aiko" className="w-5 h-5" />
+                  <img src={`${CDN_URL}/images/bow-white.svg`} alt="Aiko" className="w-5 h-5" />
                 </div>
               ) : (
                 <div className="w-8 h-8 bg-pink-dark/10 rounded-full flex items-center justify-center">

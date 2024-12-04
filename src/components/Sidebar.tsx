@@ -9,6 +9,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { SuggestedCreator } from './SuggestedCreator';
 import { Entry } from './chat/Entry';
 import { Link } from 'react-router-dom';
+import { CDN_URL } from '../utils/constants';
 
 const navigationItems = [
   { icon: <Home size={18} />, text: "For You", active: true },
@@ -151,7 +152,7 @@ export function Sidebar() {
           <button className="w-full flex items-center gap-3 px-4 py-3 bg-pink-950/20 hover:bg-pink-950/30 rounded-lg transition-all duration-200">
             <div className="w-8 h-8 flex items-center justify-center overflow-hidden rounded-lg bg-pink-950/10">
               <img
-                src="/bow3.svg"
+                src={`${CDN_URL}/images/bow3.svg`}
                 alt="Chat Icon"
                 className="w-full h-full object-cover"
               />

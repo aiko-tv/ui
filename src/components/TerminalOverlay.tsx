@@ -72,7 +72,7 @@ export function TerminalOverlay({ isOpen, onClose }: TerminalOverlayProps) {
             {/* Terminal Content */}
             <div
               ref={terminalRef}
-              className="h-[calc(100vh-4rem-2.5rem)] overflow-y-auto p-4 font-mono text-sm bg-[url('/cute.png')] bg-cover bg-center bg-opacity-5"
+              className="h-[calc(100vh-4rem-2.5rem)] overflow-y-auto p-4 font-mono text-sm bg-[url('https://aiko-tv.b-cdn.net/images/cute.png')] bg-cover bg-center bg-opacity-5"
             >
               <div className="max-w-4xl mx-auto backdrop-blur-sm p-6 rounded-lg border border-[#fe2c55]/10">
                 {lines.map((line, index) => (

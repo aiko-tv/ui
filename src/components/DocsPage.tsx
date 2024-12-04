@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { CDN_URL } from '../utils/constants';
 
 export const DocsPage = () => {
   return (
@@ -10,7 +11,7 @@ export const DocsPage = () => {
         className="absolute top-8 left-8 flex flex-col items-center group"
       >
         <img 
-          src="/bow1.svg" 
+          src={`${CDN_URL}/images/bow1.svg`} 
           alt="Bow Logo" 
           className="w-16 h-16 mb-2"
         />

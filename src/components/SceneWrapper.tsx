@@ -27,6 +27,7 @@ import Avatar from './Avatar';
 import { useStreamCount } from '../hooks/useStreamCount';
 import { useSceneEngine } from '../contexts/SceneEngineContext';
 import { toast } from 'sonner';
+import { CDN_URL } from '../utils/constants';
 
 interface Creator {
     name: string;
@@ -73,7 +74,7 @@ export function OrbitingBall2({ color, delay }: OrbitingBallProps) {
                 }`}
         >
             {/* <div className={`w-3 h-3 ${color} rounded-full shadow-lg`} /> */}
-            <img src={`/bow2.svg`} alt="Orbiting Ball" className="w-6 h-6" />
+            <img src={`${CDN_URL}/images/bow2.svg`} alt="Orbiting Ball" className="w-6 h-6" />
         </div>
     );
 }
