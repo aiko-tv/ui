@@ -6,6 +6,7 @@ import { X } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useScene } from '../../contexts/ScenesContext';
 import { useUser } from '../../contexts/UserContext';
+import { CDN_URL } from '../../utils/constants';
 
 interface ApiResponse {
   user: string;
@@ -103,7 +104,7 @@ export function Entry() {
         <button className="w-full flex items-center gap-3 px-4 py-3 bg-pink-950/20 hover:bg-pink-950/30 rounded-lg transition-all duration-200">
           <div className="w-8 h-8 flex items-center justify-center overflow-hidden rounded-lg bg-pink-950/10">
             <img
-              src="/bow3.svg"
+              src={`${CDN_URL}/images/bow3.svg`}
               alt="Chat Icon"
               className="w-full h-full object-cover"
             />
@@ -120,7 +121,7 @@ export function Entry() {
           </Dialog.Close>
           <header className="border-b border-pink-950/30 bg-gray-900/80 backdrop-blur-sm rounded-t-2xl">
             <div className="px-4 py-3 flex items-center gap-3">
-              <img src="/bow3.svg" alt="Aiko" className="w-6 h-6" />
+              <img src={`${CDN_URL}/images/bow3.svg`} alt="Aiko" className="w-6 h-6" />
               <h1 className="text-lg font-semibold text-pink-300">Launch your Streamer</h1>
             </div>
           </header>

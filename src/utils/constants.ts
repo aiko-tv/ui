@@ -87,11 +87,6 @@ export interface SceneConfig {
   models: Model[];
 }
 
-// Add BGM interface extension
-interface BGMConfig {
-    bgm?: string | string[];  // Optional background music URL for the scene
-}
-
 // Extend your existing NewStreamConfig interface
 export interface NewStreamConfig {
   id: number;
@@ -152,7 +147,7 @@ export const MODELS_BASE_URL = '/models';
 // should just be key of ANIMATION_MAP
 export const getAnimationUrl = (animation: keyof typeof ANIMATION_MAP) => {
     const animationFile = ANIMATION_MAP[animation];
-    const animationUrl = `${ANIMATIONS_BASE_URL}/${animationFile}`;
+    const animationUrl = `${CDN_URL}${ANIMATIONS_BASE_URL}/${animationFile}`;
     console.log('🎬 Getting Animation URL:', {
         animation,
         animationFile,
@@ -161,7 +156,7 @@ export const getAnimationUrl = (animation: keyof typeof ANIMATION_MAP) => {
     return animationUrl;
 };
 export const getEnvironmentUrl = (environment: string) => {
-    return `${ENVIRONMENTS_BASE_URL}/${environment}`;
+    return `${CDN_URL}${ENVIRONMENTS_BASE_URL}/${environment}`;
 }
 export const getModelUrl = (model: string) => `${CDN_URL}${MODELS_BASE_URL}/${model}`;
 

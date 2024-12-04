@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import './Splash.css';  // Create this file for the styles
+import { CDN_URL } from '../utils/constants';
 
 const Splash = () => {
   useEffect(() => {
@@ -36,7 +37,7 @@ const Splash = () => {
     <div className="splash-container">
       <div className="hearts" id="hearts" />
       <div className="logo-container">
-        <img src="/bow1.svg" alt="Aiko Logo" />
+        <img src={`${CDN_URL}/images/bow1.svg`} alt="Aiko Logo" />
       </div>
       <svg className="secondary-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 628 183">
         {/* Your secondary SVG path data */}
