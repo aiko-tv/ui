@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../utils/constants.ts';
 import axios from 'axios'; // Add axios for making HTTP requests
-import { toast } from 'sonner';
 import { Info, Sparkles } from 'lucide-react';
 
 
@@ -15,15 +14,25 @@ export const OnboardPage = () => {
     setFile(event.target.files[0]);
   };
 
+  const isValidUUID = (input: string): boolean => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i; // Allow any valid UUID-like string
+    return uuidRegex.test(input);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
     // Basic validation
-    if (!agentId) {
-        window.showToast('Agent ID is required!', 'error');
+    if (!agentId || !isValidUUID(agentId)) { 
+        window.showToast('Agent ID is required and must be a valid UUID!', 'error');
         return;
     }
     if (!file) {
         window.showToast('Please select a file to upload!', 'error');
+        return;
+    }
+    console.log(file);
+    if (file && !file.name.endsWith('.vrm')) { // Check for .vrm file extension
+        window.showToast('Only .vrm files are allowed!', 'error');
         return;
     }
 
@@ -44,10 +53,14 @@ export const OnboardPage = () => {
       setAgentId(''); 
       setFile(null); 
       setEnvironmentSetting('modern_bedroom_compressed.glb'); 
-
+      if (response.data.success) {
+        window.showToast('Upload successful!', 'success');
+      } else {
+        window.showToast(response.data.message, 'error');
+      }
     } catch (error) {
       console.error('Error uploading VRM:', error);
-      window.showToast('Error uploading VRM!', 'error');
+      window.showToast(error.message, 'error');
     }
   };
 
@@ -81,47 +94,60 @@ export const OnboardPage = () => {
             <section>
               <div className="grid gap-4">
                 <div className="flex lg:flex-row flex-col gap-4">
-                  <input
-                    type="text"
-                    placeholder="Enter Agent ID"
-                    value={agentId}
-                    onChange={(e) => setAgentId(e.target.value)}
-                    className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg bg-transparent"
-                  />
+                  <div className="grid w-full gap-2">
+                    <label className="text-md mr-4">
+                    Enter your agent ID from your Eliza repo.
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Enter Agent ID"
+                        value={agentId}
+                        onChange={(e) => setAgentId(e.target.value)}
+                        className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg bg-transparent"
+                    />
+                  </div>
 
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg"
-                  />
+                  <div className="grid w-full gap-2">
+                    <label className="text-md mr-4">
+                    Upload your VRM file.
+                    </label>
+                    <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg"
+                    />
+                  </div>
                   
                 </div>
-                <div className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <label className="text-md mb-4">
+                <div className="grid w-full gap-2">
+                    <label className="text-md">
                         Select an environment
                     </label>
-                  </div>
-                  <div className="grid lg:grid-cols-4 grid-cols-1 gap-4">
-                    <div 
-                      className={`relative cursor-pointer border-2 rounded-xl overflow-hidden ${environmentSetting === 'modern_bedroom_compressed.glb' ? 'border-[#fe2c55]' : 'border-transparent'}`}
-                      onClick={() => setEnvironmentSetting('modern_bedroom_compressed.glb')}
-                    >
-                      <img 
-                        src="https://aiko-tv.b-cdn.net/images/modern_bedroom_compressed.png" // Bedroom image
-                        alt="Modern Bedroom"
-                        className="w-full h-full rounded-lg"
-                      />
-                      
+                    <div className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg">
+                    <div className="flex items-center justify-between">
+                        
                     </div>
-                    {/* Placeholder skeleton outline for future images */}
-                    <div className="relative rounded-lg h-32 dark:bg-gray-600 bg-neutral-200">
-                      <div className="absolute inset-0 flex items-center justify-center text-center text-sm p-2 dark:text-neutral-100 text-neutral-900">
-                        More environments coming soon!
-                      </div>
+                    <div className="grid lg:grid-cols-4 grid-cols-1 gap-4">
+                        <div 
+                        className={`relative cursor-pointer border-2 rounded-xl overflow-hidden ${environmentSetting === 'modern_bedroom_compressed.glb' ? 'border-[#fe2c55]' : 'border-transparent'}`}
+                        onClick={() => setEnvironmentSetting('modern_bedroom_compressed.glb')}
+                        >
+                        <img 
+                            src="https://aiko-tv.b-cdn.net/images/modern_bedroom_compressed.png" // Bedroom image
+                            alt="Modern Bedroom"
+                            className="w-full h-full rounded-lg"
+                        />
+                        
+                        </div>
+                        {/* Placeholder skeleton outline for future images */}
+                        <div className="relative rounded-lg h-32 dark:bg-gray-600 bg-neutral-200">
+                        <div className="absolute inset-0 flex items-center justify-center text-center text-sm p-2 dark:text-neutral-100 text-neutral-900">
+                            More environments coming soon!
+                        </div>
+                        </div>
+                    
                     </div>
-                   
-                  </div>
+                    </div>
                 </div>
                 <button 
                   type="submit" // Add a submit button
