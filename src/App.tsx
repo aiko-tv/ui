@@ -13,6 +13,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ModalProvider } from './contexts/ModalContext';
 import { GiftModalProvider, useGiftModal } from './contexts/GiftContext';
 import { DocsPage } from './components/DocsPage';
+import { OnboardPage } from './components/onboardPage';
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -45,6 +46,7 @@ export default function App() {
                           <Routes>
                             <Route path="/:modelName" element={<InnerApp />} />
                             <Route path="/" element={<InnerApp />} />
+                            <Route path="/onboard" element={<OnboardPage />} />
                             <Route path="/configure" element={<SceneConfigurator />} />
                             <Route path="/docs" element={<DocsPage />} />
                           </Routes>
