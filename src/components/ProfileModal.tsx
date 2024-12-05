@@ -7,13 +7,13 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { CDN_URL } from '../utils/constants';
 
 const DEFAULT_PFPS = [
-  `${CDN_URL}images/pfp_blue.png`,
-  `${CDN_URL}images/pfp_green.png`,
-  `${CDN_URL}images/pfp_orange.png`,
-  `${CDN_URL}images/pfp_pink.png`,
-  `${CDN_URL}images/pfp_red.png`,
-  `${CDN_URL}images/pfp_violet.png`,
-  `${CDN_URL}images/pfp_yellow.png`,
+  `${CDN_URL}/images/pfp_blue.png`,
+  `${CDN_URL}/images/pfp_green.png`,
+  `${CDN_URL}/images/pfp_orange.png`,
+  `${CDN_URL}/images/pfp_pink.png`,
+  `${CDN_URL}/images/pfp_red.png`,
+  `${CDN_URL}/images/pfp_violet.png`,
+  `${CDN_URL}/images/pfp_yellow.png`,
 ];
 
 

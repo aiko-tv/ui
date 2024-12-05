@@ -433,7 +433,6 @@ export function ThreeScene({ debugMode }: { debugMode: boolean }) {
     }
   });
 
-
   console.log({vrmRefs})
 
   // Add this near your other refs
@@ -688,57 +687,6 @@ export function ThreeScene({ debugMode }: { debugMode: boolean }) {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [debugMode, models, selectedModelIndex, cameraPosition, cameraPitch, cameraRotation]);
-
-  // useEffect to update the agent's sceneConfig in the database
-  useEffect(() => {
-    const updateSceneConfigInDB = async () => {
-      if (!activeSceneConfig) return;
-
-      const currentConfig = {
-        id: activeSceneConfig.id,
-        name: activeSceneConfig.name,
-        environmentURL: environmentUrl,
-        models: models.map((model, index) => ({
-          ...model,
-          modelPosition: modelPositionsRef.current[index] || model.modelPosition,
-          modelRotation: modelRotationsRef.current[index] || model.modelRotation,
-          modelScale: modelRefs.current[index]?.scale.toArray() || model.modelScale,
-        })),
-        environmentScale: sceneConfig.environmentScale,
-        environmentPosition: sceneConfig.environmentPosition,
-        environmentRotation: sceneConfig.environmentRotation,
-        cameraPitch,
-        cameraPosition,
-        cameraRotation,
-      };
-
-      try {
-        const controller = new AbortController(); // Create an AbortController
-        // PUT request to update the scene config use current AgentId
-        fetch(`${API_URL}/api/scenes/${currentAgentId}`, { signal: controller.signal, method: 'PUT', body: JSON.stringify(currentConfig) }) // Pass the signal to fetch
-          .then(response => response.json())
-          .then(data => {
-            console.log('saved scene config to db', {data})
-          })
-          .catch(error => {
-            if (error.name === 'AbortError') {
-              console.log('Fetch aborted'); // Handle fetch abort
-            } else {
-              console.error('Fetch error:', error); // Handle other errors
-            }
-          });
-
-        return () => {
-          controller.abort(); // Cleanup function to abort fetch on unmount
-        };
-        
-      } catch (error) {
-        console.error("Error updating scene configuration:", error);
-      }
-    };
-
-    updateSceneConfigInDB();
-  }, [sceneConfig]); // Run this effect whenever sceneConfig changes
 
   useEffect(() => {
     if (activeSceneConfig) {
