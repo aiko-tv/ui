@@ -6,8 +6,9 @@ import { API_URL } from '../utils/constants';
 
 interface UserProfile {
   handle: string;
-  pfp: string | File | null; 
+  pfp: string; 
   isUploading: boolean;
+  newPfp?: File | null;
 }
 
 interface UserContextType {
@@ -84,9 +85,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       formData.append('isUploading', JSON.stringify(profile.isUploading));
   
       // If the profile picture is a File object, append it to FormData
-      if (profile.isUploading && profile.pfp) {
-        // console.log('Uploading File:', profile.pfp);
-        formData.append('image', profile.pfp as File); // Directly append the file
+      if (profile.isUploading && profile.newPfp) {
+        console.log('Uploading File:', profile.pfp);
+        formData.append('image', profile.newPfp as File); // Directly append the file
       } else if (profile.pfp && typeof profile.pfp === 'string') {
         // If pfp is a string (URL or base64), append it as well
         formData.append('image', profile.pfp);

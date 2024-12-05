@@ -53,8 +53,9 @@ export function ProfileModal() {
 
     updateProfile({
       handle: handle.trim(),
-      pfp: selectedFile ? selectedFile : pfp, // Pass the image URL or base64 data here
+      pfp: pfp, // Pass the image URL or base64 data here
       isUploading: selectedFile ? true : false,
+      newPfp: selectedFile ? selectedFile : null,
     });
 
     setShowProfileModal(false);
