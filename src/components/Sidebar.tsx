@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { CDN_URL } from '../utils/constants';
 
 const navigationItems = [
-  { icon: <Home size={18} />, text: "For You", active: true },
+  { icon: <Home size={18} />, text: "For You", active: true, to: '/' },
   { icon: <Compass size={18} />, text: "Explore", comingSoon: true },
   { icon: <Users2 size={18} />, text: "Following", comingSoon: true },
   { icon: <Radio size={18} />, text: "LIVE", comingSoon: true },
@@ -62,8 +62,24 @@ export function Sidebar() {
     >
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="p-1">
-          {navigationItems.map((item, index) => (
-            <div key={index}>
+        {navigationItems.map((item, index) => (
+          <div key={index}>
+            {item.to ? (
+              <Link to={item.to}>
+                <div
+                  className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 ${item.comingSoon ? 'opacity-60' : 'cursor-pointer'
+                    } ${item.active ? 'text-gray-800 dark:text-gray-100' : 'text-gray-800 dark:text-gray-100'}`}
+                >
+                  {item.icon}
+                  <div className="flex items-center justify-between flex-1">
+                    <span className={`font-medium text-[15px] transition-opacity duration-200 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100'
+                      }`}>
+                      {item.text}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ) : (
               <div
                 className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 ${item.comingSoon ? 'opacity-60' : 'cursor-pointer'
                   } ${item.active ? 'text-gray-800 dark:text-gray-100' : 'text-gray-800 dark:text-gray-100'}`}
@@ -74,15 +90,11 @@ export function Sidebar() {
                     }`}>
                     {item.text}
                   </span>
-                  {item.comingSoon && !isCollapsed && (
-                    <span className="invisible group-hover:visible bg-[#fe2c55] px-2 py-0.5 rounded text-white text-[11px] font-medium ml-2">
-                      Coming Soon!
-                    </span>
-                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            )}
+          </div>
+        ))}
         </div>
 
         {!connected && (
@@ -93,7 +105,7 @@ export function Sidebar() {
             </p>
             <WalletMultiButton>
               <div className="flex items-center">
-                <img src="/icons/phantom.svg" alt="Phantom" className="w-4 h-4 mr-2" />
+                <img src={`${CDN_URL}/icons/phantom.svg`} alt="Phantom" className="w-4 h-4 mr-2" />
                 <span className="hidden md:inline">Connect Wallet</span>
                 <span className="md:hidden">Connect</span>
               </div>

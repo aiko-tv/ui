@@ -41,7 +41,7 @@ const Splash = () => {
       </div>
       <svg className="secondary-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 628 183">
         {/* Your secondary SVG path data */}
-        <img src="/icons/aikotext.svg" alt="Aiko Logo" />
+        <img src="https://aiko-tv.b-cdn.net/icons/aikotext.svg" alt="Aiko Logo" />
       </svg>
     </div>
   );
