@@ -1,7 +1,7 @@
 import { Moon, Sun, Circle, Pencil, Coins, Terminal } from 'lucide-react';
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnection } from "@solana/wallet-adapter-react";
-
+import { Link } from 'react-router-dom';
 import { WalletMultiButton, WalletConnectButton, useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useState, useEffect } from 'react';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -49,20 +49,22 @@ export function Header({ onMenuClick }: HeaderProps) {
   return (
     <>
       <header className="h-16 bg-white dark:bg-dark-gray-1 border-b border-gray-100 dark:border-dark-gray-3 flex items-center justify-between px-4 z-50">
-        <div className="flex items-center gap-2">
-          <img
-            src="icons/aikotext2.svg"
-            alt="Logo"
-            className="w-16 h-6 brightness-0 dark:brightness-100"
-          />
-          <img
-            src={`${CDN_URL}/images/bow2.svg`}
-            alt="TV Logo"
-            className="w-8 h-8 "
-          />
+        <Link to="/">
+          <div className="flex items-center gap-2">
+            <img
+              src={`${CDN_URL}/icons/aikotext2.svg`}
+              alt="Logo"
+              className="w-16 h-6 brightness-0 dark:brightness-100"
+            />
+            <img
+              src={`${CDN_URL}/images/bow2.svg`}
+              alt="TV Logo"
+              className="w-8 h-8 "
+            />
 
-          {/* <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Aiko.tv</h1> */}
-        </div>
+            {/* <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Aiko.tv</h1> */}
+          </div>
+        </Link>
 
         <div className="flex items-center gap-4">
           {/* <button
@@ -85,7 +87,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           {connected ? null : (
             <WalletMultiButton>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <img src="/icons/phantom.svg" alt="Phantom" className="w-4 h-4 mr-2" />
+                <img src={`${CDN_URL}/icons/phantom.svg`} alt="Phantom" className="w-4 h-4 mr-2" />
                 <span className="hidden md:inline">Connect Wallet</span>
                 <span className="md:hidden">Connect</span>
               </div>

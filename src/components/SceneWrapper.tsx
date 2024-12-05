@@ -410,7 +410,7 @@ const SceneWrapper: React.FC<SceneWrapperProps> = ({
                                     rel="noopener noreferrer"
                                     className="hidden md:flex items-center gap-2 bg-black text-white px-3 py-2 px-2 rounded-md font-medium text-sm hover:bg-black/80 no transition-all duration-200 ease-in-out"
                                 >
-                                    <img src={'./icons/x.svg'} alt="X" className="w-3 h-3" />
+                                    <img src={`${CDN_URL}/icons/x.svg`} alt="X" className="w-3 h-3" />
                                     <span className="text-sm font-medium">{twitter.replace('@', '@')}</span>
                                 </a>
                                 {/* <button

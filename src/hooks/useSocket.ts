@@ -10,6 +10,7 @@ export const useSocket = () => {
   const [isServerOnline, setIsServerOnline] = useState(true);
 
   useEffect(() => {
+    try {
     if (!socketInstance) {
       socketInstance = io(SOCKET_URL, {
         reconnectionDelay: 1000,
@@ -20,6 +21,10 @@ export const useSocket = () => {
         upgrade: false,
         rejectUnauthorized: false
       });
+      }
+    } catch (error) {
+      console.error('Socket connection error:', error);
+      setIsServerOnline(false);
     }
 
     const socket = socketInstance;

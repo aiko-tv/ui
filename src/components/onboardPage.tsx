@@ -43,7 +43,7 @@ export const OnboardPage = () => {
 
 
     try {
-      const response = await axios.post(`${API_URL}/api/upload/vrm`, formData, {
+      const response = await axios.put(`${API_URL}/api/upload/vrm`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
