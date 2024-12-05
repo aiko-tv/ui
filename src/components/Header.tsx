@@ -66,7 +66,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           </div>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center ">
           {/* <button
             onClick={() => setShowTerminal(!showTerminal)}
             className="p-2 hover:bg-gray-100 dark:hover:bg-dark-gray-3 rounded-full"
@@ -120,7 +120,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                     className="bg-[#fe2c55] text-white px-4 py-1.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
                   >
                     <Coins size={16} />
-                    Get Coins
+                    <span className="hidden sm:inline">Get Coins</span>
                   </button>
                 </div>
               </div>
