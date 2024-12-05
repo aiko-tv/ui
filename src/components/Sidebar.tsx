@@ -67,11 +67,11 @@ export function Sidebar() {
             {item.to ? (
               <Link to={item.to}>
                 <div
-                  className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 ${item.comingSoon ? 'opacity-60' : 'cursor-pointer'
-                    } ${item.active ? 'text-gray-800 dark:text-gray-100' : 'text-gray-800 dark:text-gray-100'}`}
+                  className={`flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 ${item.comingSoon ? 'opacity-60' : 'cursor-pointer'
+                    } ${item.active ? 'text-gray-800 dark:text-gray-100' : 'text-gray-800 dark:text-gray-100'} ${isCollapsed ? '' : 'gap-3'}`}
                 >
                   {item.icon}
-                  <div className="flex items-center justify-between flex-1">
+                  <div className="flex items-center justify-between flex-1 max-h-[25px]">
                     <span className={`font-medium text-[15px] transition-opacity duration-200 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100'
                       }`}>
                       {item.text}
@@ -81,8 +81,8 @@ export function Sidebar() {
               </Link>
             ) : (
               <div
-                className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 ${item.comingSoon ? 'opacity-60' : 'cursor-pointer'
-                  } ${item.active ? 'text-gray-800 dark:text-gray-100' : 'text-gray-800 dark:text-gray-100'}`}
+                className={`flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 ${item.comingSoon ? 'opacity-60' : 'cursor-pointer'
+                  } ${item.active ? 'text-gray-800 dark:text-gray-100' : 'text-gray-800 dark:text-gray-100'} ${isCollapsed ? '' : 'gap-3'}`}
               >
                 {item.icon}
                 <div className="flex items-center justify-between flex-1">

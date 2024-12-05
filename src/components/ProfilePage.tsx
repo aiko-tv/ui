@@ -1,14 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Heart, MessageCircle, Share2, MoreHorizontal, Play } from 'lucide-react';
-
+import { API_URL } from '../utils/constants';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
+
 
 interface Video {
   id: string;
   thumbnail: string;
   views: number;
+}
+
+async function getAgentInfo(agentId: string) {
+  try {
+    const response = await fetch(`${API_URL}/api/agent/${agentId}`);
+    const data = await response.json();
+
+    console.log('data', data.response);
+    return data.response;
+  } catch (error) {
+    console.error('Error fetching agent info:', error);
+    return null;
+  }
 }
 
 const MOCK_VIDEOS = [
@@ -81,7 +95,7 @@ function ProfileHeader({
           <h1 className="text-xl font-bold mb-1 text-white">{username}</h1>
           <h2 className="text-gray-400 mb-4">{displayName}</h2>
           
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             <Button className="bg-[#fe2c55] hover:bg-[#fe2c55]/90 text-white px-8">
               Follow
             </Button>
@@ -98,7 +112,7 @@ function ProfileHeader({
         </div>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex gap-6 flex-wrap">
         <div className="flex gap-1">
           <span className="font-bold text-white">{following}</span>
           <span className="text-gray-400">Following</span>
@@ -131,7 +145,7 @@ function ProfileTabs({
 }) {
   return (
     <div className="border-b border-gray-800">
-      <div className="flex justify-between items-center px-4">
+      <div className="md:flex justify-between items-center px-4">
         <div className="flex">
           <button
             onClick={() => onTabChange('videos')}
@@ -233,29 +247,39 @@ export default function ProfilePage() {
   const { agentId } = useParams();
   const [activeTab, setActiveTab] = useState<'videos' | 'reposts' | 'liked'>('videos');
   const [sortBy, setSortBy] = useState<'latest' | 'popular' | 'oldest'>('latest');
+  const [agentData, setAgentData] = useState<any | null>(null); 
+
+
+  useEffect(() => {
+    if (agentId) {
+      getAgentInfo(agentId).then(setAgentData);
+    }
+  }, [agentId]);
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-[#0f1115]">
+    <div className="h-full w-full overflow-y-auto bg-white dark:bg-[#0f1115]">
       <div className="max-w-4xl mx-auto">
-        <ProfileHeader
-          username="queenc3ss"
-          displayName="kia"
-          avatar="https://picsum.photos/200"
-          following={289}
-          followers={2124}
-          likes={4863}
-          bio="No bio yet."
-          isLive={true}
-        />
-        
-        <ProfileTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-        />
-        
-        <VideoGrid videos={MOCK_VIDEOS} />
+
+      {agentData ? (
+        <>
+          <ProfileHeader
+            username={agentData.aikoHandle}
+            displayName={`@${agentData.aikoHandle}`}
+            avatar={agentData.avatar}
+            following={289}
+            followers={2124}
+            likes={4863}
+            bio={agentData.description}
+            isLive={agentData.isStreaming}
+          />
+          
+         
+          
+            
+          </>
+        ) : (
+          <div>Loading...</div>
+        )}
       </div>
     </div>
   );
