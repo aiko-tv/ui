@@ -51,17 +51,24 @@ export const useAgentGifts = (agentId: string, page: number = 1, limit: number =
 };
 
 export const useTopGifters = (
-  agentId: string,
+  agentId: string | undefined,
   limit: number = 10,
   timeframe: 'day' | 'week' | 'month' | 'all' = 'all'
 ) => {
   return useQuery<TopGiftersResponse>({
     queryKey: ['topGifters', agentId, limit, timeframe],
     queryFn: async () => {
+      if (!agentId) {
+        return {
+          timeframe,
+          topGifters: []
+        }
+      }
       const { data } = await axios.get(`${API_URL}/api/agents/${agentId}/top-gifters`, {
         params: { limit, timeframe }
       });
       return data;
-    }
+    },
+    enabled: !!agentId
   });
 };

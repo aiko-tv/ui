@@ -147,7 +147,7 @@ export function SceneProvider({ children }: { children: ReactNode }) {
   const userId = publicKey?.toString() || undefined;
 
 
-  const [currentAgentId, setCurrentAgentId] = useState(newScenes[0]?.agentId || '');
+  const [currentAgentId, setCurrentAgentId] = useState(newScenes[0]?.agentId || undefined);
 
   // Comments
   const [comments, setComments] = useState<Comment[]>([]);
@@ -232,6 +232,12 @@ export function SceneProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchSceneStats = async () => {
       try {
+        if (!currentAgentId) {
+          return {
+            likes: 0,
+            comments: 0
+          }
+        }
         const res = await axios.get(`${API_URL}/api/streams/${currentAgentId}/stats`);
         // console.log(`Scene stats for ${currentAgentId}:`, res.data);
         setLikes(res.data.likes);
@@ -373,6 +379,11 @@ export function SceneProvider({ children }: { children: ReactNode }) {
       // Fetch recent gifts
       const fetchGifts = async () => {
         try {
+          if (!currentAgentId) {
+            return {
+              gifts: []
+            };
+          }
           const url = `${API_URL}/api/agents/${currentAgentId}/gifts?limit=10`;
           // console.log('fetching gifts from', url);
           const res = await axios.get(url);
