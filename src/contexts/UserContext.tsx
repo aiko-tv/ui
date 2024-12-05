@@ -41,6 +41,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           }
           throw new Error('Failed to fetch profile');
         }
+
         return response.json();
       } catch (error) {
         console.error('Error fetching profile:', error);
