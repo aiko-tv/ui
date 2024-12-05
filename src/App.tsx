@@ -21,6 +21,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import SceneConfigurator from './components/SceneConfigurator';
 import { GiftConfirmationModal } from './components/GiftConfirmationModal';
 import { SOLANA_RPC_URL } from './utils/constants';
+import ProfilePage from './components/ProfilePage';
 
 const endpoint = SOLANA_RPC_URL;
 const wallets = [new PhantomWalletAdapter()];
@@ -49,6 +50,7 @@ export default function App() {
                             <Route path="/onboard" element={<OnboardPage />} />
                             <Route path="/configure" element={<SceneConfigurator />} />
                             <Route path="/docs" element={<DocsPage />} />
+                            <Route path="/profile/:agentId" element={<InnerProfilePage />} />
                           </Routes>
                           <ProfileModal />
                           <ToastContainer />
@@ -98,6 +100,33 @@ const InnerApp = () => {
         gift={batchedGift}
         isSending={isSending}
       />
+    </div>
+  )
+}
+
+const InnerProfilePage = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  return (
+    <div className="flex flex-col h-screen overflow-hidden overscroll-none dark:bg-dark">
+      <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <div className="flex flex-1 overflow-hidden">
+        <div
+          className={`
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed md:relative md:translate-x-0
+        z-50 h-[calc(100vh-64px)]
+        transition-transform duration-300 ease-in-out
+      `}
+        >
+          <Sidebar />
+        </div>
+        <div className="flex-1 min-w-0">
+          <ProfilePage />
+        </div>
+      </div>
+      <ProfileModal />
+      <ToastContainer />
     </div>
   )
 }
