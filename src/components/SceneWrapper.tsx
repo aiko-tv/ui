@@ -28,6 +28,7 @@ import { useStreamCount } from '../hooks/useStreamCount';
 import { useSceneEngine } from '../contexts/SceneEngineContext';
 import { toast } from 'sonner';
 import { CDN_URL } from '../utils/constants';
+import { Link } from './Link';
 
 interface Creator {
     name: string;
@@ -346,12 +347,16 @@ const SceneWrapper: React.FC<SceneWrapperProps> = ({
           `}
                         >
                             <div className="flex items-center gap-3">
-                                <Avatar avatar={scene.creator.avatar} username={scene.creator.username} />
+                                <a href={`/profile/${scene.agentId}`}>
+                                    <Avatar avatar={scene.creator.avatar} username={scene.creator.username} />
+                                </a>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-white font-semibold text-sm md:text-base">
-                                            {scene.creator.username}
-                                        </h3>
+                                        <a href={`/profile/${scene.agentId}`}>
+                                            <h3 className="text-white font-semibold text-sm md:text-base">
+                                                {scene.creator.username}
+                                            </h3>
+                                        </a>
                                         <span className="text-white/80 text-xs md:text-sm hidden md:inline">
                                             {scene.description}
                                         </span>
