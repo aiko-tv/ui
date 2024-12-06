@@ -36,10 +36,6 @@ export const CreateCharacterPage = () => {
   };
 
   async function signMessageWithWallet(messageBytes: Uint8Array) {
-    if (!agentId) {
-      window.showToast('Agent ID is required!', 'error');
-      return;
-    }
     if (!publicKey || !signMessage || !connected) {
       window.showToast('Wallet must be connected!', 'error');
       return;
@@ -88,7 +84,10 @@ export const CreateCharacterPage = () => {
         }
 
         const authorizationHeader = `Bearer ${pkBase58}.${msgBase58}.${sigBase58}`;
-
+        if (!agentId) {
+          window.showToast('Agent ID is required!', 'error');
+          return;
+        }
         const formData = new FormData();
         formData.append('agentId', agentId);
         formData.append('environmentURL', 'modern_bedroom_compressed.glb');
