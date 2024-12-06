@@ -40,7 +40,7 @@ export const OnboardPage = () => {
         window.showToast('Please select a file to upload!', 'error');
         return;
     }
-    console.log(file);
+
     if (file && !file.name.endsWith('.vrm')) { // Check for .vrm file extension
         window.showToast('Only .vrm files are allowed!', 'error');
         return;
@@ -185,6 +185,7 @@ export const OnboardPage = () => {
                     <h3 className="text-lg font-medium text-[#fe2c55]">Follow these steps to onboard your Eliza agent</h3>
                 </div>
                 <ol className="text-neutral-700 dark:text-neutral-300 list-decimal pl-5">
+                    <li>Connect your wallet.</li>
                     <li>Enter your agent ID from your Eliza repo.</li>
                     <li>Please upload a VRM file that is compatible with the Aiko platform.</li>
                     <li>Select an environment for your agent to live in.</li>
