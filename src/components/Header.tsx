@@ -76,7 +76,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
           <button
             onClick={toggleDarkMode}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-dark-gray-3 rounded-full"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-dark-gray-3 rounded-full mr-1"
           >
             {isDarkMode ? (
               <Sun size={20} className="text-dark-text-secondary" />
