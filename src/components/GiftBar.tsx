@@ -199,7 +199,7 @@ export function GiftBar() {
                   className="bg-[#fe2c55] text-white px-4 py-1.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
                 >
                   <Coins size={16} />
-                  Get Coins
+                  <span className="hidden lg:inline">Get Coins</span>
                 </button>
               </div>
             </div>

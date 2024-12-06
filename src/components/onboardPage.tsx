@@ -3,12 +3,16 @@ import { Link } from 'react-router-dom';
 import { API_URL, CDN_URL } from '../utils/constants.ts';
 import axios from 'axios'; // Add axios for making HTTP requests
 import { Info, Sparkles } from 'lucide-react';
-
+import { Header } from './Header.tsx';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { sign } from 'tweetnacl';
+import bs58 from 'bs58';
 
 export const OnboardPage = () => {
   const [agentId, setAgentId] = useState('');
   const [environmentSetting, setEnvironmentSetting] = useState('modern_bedroom_compressed.glb'); // Default selection
   const [file, setFile] = useState(null);
+  const { connected, publicKey, signMessage } = useWallet();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -21,6 +25,12 @@ export const OnboardPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
+
+    if (!connected || !publicKey) {
+        window.showToast('Wallet must be connected!', 'error');
+        return;
+    }
+    
     // Basic validation
     if (!agentId || !isValidUUID(agentId)) { 
         window.showToast('Agent ID is required and must be a valid UUID!', 'error');
@@ -36,6 +46,27 @@ export const OnboardPage = () => {
         return;
     }
 
+    const action = 'vrm:post';
+    const exp = Math.floor(Date.now() / 1000) + 300; // Expiration time: 5 minutes from now
+    const message = JSON.stringify({ action, exp });
+    const messageBytes = new TextEncoder().encode(message);
+    if (!signMessage) {
+        window.showToast('Failed to sign message!', 'error');
+        return;
+    }
+    const signature = await signMessage(messageBytes);
+    // Sign the message
+    // const verifiedValue = sign.detached.verify(
+    //     messageBytes, 
+    //     signature, 
+    //     publicKey.toBytes()
+    // );
+    const pkBase58 = bs58.encode(publicKey.toBytes());
+    const msgBase58 = bs58.encode(messageBytes);
+    const sigBase58 = bs58.encode(signature);
+
+    const authorizationHeader = `Bearer ${pkBase58}.${msgBase58}.${sigBase58}`;
+
     const formData = new FormData();
     formData.append('agentId', agentId);
     formData.append('environmentURL', 'modern_bedroom_compressed.glb');
@@ -43,20 +74,16 @@ export const OnboardPage = () => {
 
 
     try {
-      const response = await axios.put(`${API_URL}/api/upload/vrm`, formData, {
+      const response = await axios.post(`${API_URL}/api/upload/vrm`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: authorizationHeader,
         },
       });
-      console.log('Upload successful:', response.data);
-      window.showToast('Upload successful!', 'success');
-      setAgentId(''); 
-      setFile(null); 
-      setEnvironmentSetting('modern_bedroom_compressed.glb'); 
-      if (response.data.success) {
+      if (response.status === 200) {
         window.showToast('Upload successful!', 'success');
       } else {
-        window.showToast(response.data.message, 'error');
+        window.showToast('Upload failed!', 'error');
       }
     } catch (error) {
       console.error('Error uploading VRM:', error);
@@ -66,19 +93,7 @@ export const OnboardPage = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100">
-      <Link 
-        to="/" 
-        className="absolute top-8 left-8 flex flex-col items-center group"
-      >
-        <img 
-          src={`${CDN_URL}/images/bow1.svg`} 
-          alt="Bow Logo" 
-          className="w-16 h-16 mb-2"
-        />
-        <span className="text-sm text-[#fe2c55] group-hover:text-[#fe2c55]/80 transition-colors">
-          Back to Home
-        </span>
-      </Link>
+      <Header onMenuClick={() => {}}/>
       <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <h1 className="text-4xl font-bold tracking-tight mb-4">
