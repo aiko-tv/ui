@@ -36,6 +36,10 @@ export const CreateCharacterPage = () => {
   };
 
   async function signMessageWithWallet(messageBytes: Uint8Array) {
+    if (!agentId) {
+      window.showToast('Agent ID is required!', 'error');
+      return;
+    }
     if (!publicKey || !signMessage || !connected) {
       window.showToast('Wallet must be connected!', 'error');
       return;
@@ -59,7 +63,7 @@ export const CreateCharacterPage = () => {
       (handleMessage as any).isExecuting = true;
   
       // Validate the origin to ensure the message is from the trusted iframe
-      const allowedOrigins = [`${process.env.VITE_IFRAME_URL}`];
+      const allowedOrigins = [`${import.meta.env.VITE_IFRAME_URL}`];
       if (!allowedOrigins.includes(event.origin)) {
         return;
       }
