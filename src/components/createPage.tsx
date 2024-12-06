@@ -36,24 +36,17 @@ export const CreateCharacterPage = () => {
   };
 
   async function signMessageWithWallet(messageBytes: Uint8Array) {
-    if (!connected) {
-      window.showToast('Wallet must be connected!', 'error');
-      return;
+      if (connected && publicKey) {
+          if (!signMessage) {
+              window.showToast('Failed to sign message!', 'error');   
+              return;
+          }
+          const signature = await signMessage(messageBytes);
+          const pkBase58 = bs58.encode(publicKey.toBytes());
+          const msgBase58 = bs58.encode(messageBytes);
+          const sigBase58 = bs58.encode(signature);
+          return { pkBase58, msgBase58, sigBase58 };
     }
-    if (!signMessage) {
-      window.showToast('Failed to sign message!', 'error');
-      return;
-    }
-
-    if (!publicKey) {
-      window.showToast('Failed to get public key!', 'error');
-      return;
-    }
-    const signature = await signMessage(messageBytes);
-    const pkBase58 = bs58.encode(publicKey.toBytes());
-    const msgBase58 = bs58.encode(messageBytes);
-    const sigBase58 = bs58.encode(signature);
-    return { pkBase58, msgBase58, sigBase58 };
   }
   
   // Then modify your handleMessage function
