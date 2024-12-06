@@ -14,6 +14,7 @@ import { ModalProvider } from './contexts/ModalContext';
 import { GiftModalProvider, useGiftModal } from './contexts/GiftContext';
 import { DocsPage } from './components/DocsPage';
 import { OnboardPage } from './components/onboardPage';
+import { CreateCharacterPage } from './components/createPage';
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -51,6 +52,7 @@ export default function App() {
                             <Route path="/configure" element={<SceneConfigurator />} />
                             <Route path="/docs" element={<DocsPage />} />
                             <Route path="/profile/:agentId" element={<InnerProfilePage />} />
+                            <Route path="/create" element={<CreateCharacterPage />} />
                           </Routes>
                           <ProfileModal />
                           <ToastContainer />
