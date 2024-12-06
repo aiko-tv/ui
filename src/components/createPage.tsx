@@ -36,8 +36,17 @@ export const CreateCharacterPage = () => {
   };
 
   async function signMessageWithWallet(messageBytes: Uint8Array) {
-    if (!publicKey || !signMessage || !connected) {
+    if (!connected) {
       window.showToast('Wallet must be connected!', 'error');
+      return;
+    }
+    if (!signMessage) {
+      window.showToast('Failed to sign message!', 'error');
+      return;
+    }
+
+    if (!publicKey) {
+      window.showToast('Failed to get public key!', 'error');
       return;
     }
     const signature = await signMessage(messageBytes);
