@@ -99,16 +99,13 @@ export const CreateCharacterPage = () => {
         }
 
         const authorizationHeader = `Bearer ${pkBase58}.${msgBase58}.${sigBase58}`;
-        if (!agentId) {
-          window.showToast('Agent ID is required!', 'error');
-          return;
-        }
+       
         const formData = new FormData();
         formData.append('agentId', agentId);
         formData.append('environmentURL', 'modern_bedroom_compressed.glb');
         formData.append('vrm', vrmFile); // Append the file to the form data
 
-
+        console.log('form data:', formData);
         try {
         const response = await axios.post(`${API_URL}/api/upload/vrm`, formData, {
             headers: {
