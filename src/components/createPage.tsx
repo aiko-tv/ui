@@ -36,16 +36,29 @@ export const CreateCharacterPage = () => {
   };
 
   async function signMessageWithWallet(messageBytes: Uint8Array) {
-      if (connected && publicKey) {
-          if (!signMessage) {
-              window.showToast('Failed to sign message!', 'error');   
-              return;
-          }
-          const signature = await signMessage(messageBytes);
-          const pkBase58 = bs58.encode(publicKey.toBytes());
-          const msgBase58 = bs58.encode(messageBytes);
-          const sigBase58 = bs58.encode(signature);
-          return { pkBase58, msgBase58, sigBase58 };
+    try {
+      if (!connected) {
+        throw new Error('Wallet not connected');
+      }
+      
+      if (!publicKey) {
+        throw new Error('Public key not found');
+      }
+
+      if (!signMessage) {
+        throw new Error('Sign message function not available');
+      }
+
+      const signature = await signMessage(messageBytes);
+      const pkBase58 = bs58.encode(publicKey.toBytes());
+      const msgBase58 = bs58.encode(messageBytes);
+      const sigBase58 = bs58.encode(signature);
+      
+      return { pkBase58, msgBase58, sigBase58 };
+    } catch (error) {
+      console.error('Error signing message:', error);
+      window.showToast(error.message, 'error');
+      return null;
     }
   }
   
