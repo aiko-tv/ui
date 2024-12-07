@@ -180,7 +180,7 @@ export function Sidebar() {
           {/* <div>Company</div> */}
 
           {/* <Link to="https://discord.gg/dw3zpyBS" className="block hover:text-[#fe2c55] transition-colors">Discord</Link> */}
-          <Link to="https://x.com/watch_aiko" className="block hover:text-[#fe2c55] transition-colors">X</Link>
+          <Link to="https://x.com/aikowakesup" className="block hover:text-[#fe2c55] transition-colors">X</Link>
           <Link to="/docs" className="block hover:text-[#fe2c55] transition-colors">Docs</Link>
           {/* <div>Terms & Policies</div> */}
           <div className="flex flex-col gap-1">
