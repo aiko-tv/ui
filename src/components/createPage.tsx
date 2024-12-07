@@ -37,10 +37,6 @@ export const CreateCharacterPage = () => {
 
   async function signMessageWithWallet(messageBytes: Uint8Array) {
     try {
-      if (!connected) {
-        throw new Error('Wallet not connected');
-      }
-      
       if (!publicKey) {
         throw new Error('Public key not found');
       }
