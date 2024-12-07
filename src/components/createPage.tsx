@@ -4,7 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import bs58 from 'bs58';
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
-
+import { Link } from 'react-router-dom';
 export const CreateCharacterPage = () => {
   const [agentId, setAgentId] = useState('');
   const { connected, signMessage, publicKey } = useWallet();
@@ -135,19 +135,29 @@ export const CreateCharacterPage = () => {
             <div className="space-y-12">
             <section>
                 <div className="grid gap-3 mb-2">
-                    <div className="grid gap-2">
-                        <label className="text-md mr-4">
-                        Enter your agent ID from your Eliza repo.
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="Enter Agent ID"
-                            value={agentId}
-                            onChange={(e) => setAgentId(e.target.value)}
-                            className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg bg-transparent"
-                        />
+                    <div className="items-center md:flex md:justify-between">
+                        <div className="grid gap-2 w-full mb-2 md:mb-0">
+                            <input
+                                type="text"
+                                placeholder="Enter Agent ID"
+                                value={agentId}
+                                onChange={(e) => setAgentId(e.target.value)}
+                                className="bg-neutral-50 dark:bg-neutral-800 w-full p-3 border border-[#fe2c55]/20 rounded-lg bg-transparent"
+                            />
+                        </div>
+                        <div className="grid gap-2 w-full md:justify-end">
+                            <Link to="/onboard">
+                                <h2 className="text-xl">
+                                    Already have a .vrm?
+                                </h2>
+                                <p className="text-sm">
+                                    Upload your .vrm file instead
+                                </p>
+                            </Link>
+                            
+                        </div>
                     </div>
-                </div>
+                </div>  
             </section>
             </div>
         </div>
