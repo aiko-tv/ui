@@ -84,19 +84,18 @@ export const CreateCharacterPage = () => {
       const message = JSON.stringify({ action, exp });
       const messageBytes = new TextEncoder().encode(message);
 
-     const { pkBase58, msgBase58, sigBase58 } = await signMessageWithWallet(messageBytes) || {};
+      const { pkBase58, msgBase58, sigBase58 } = await signMessageWithWallet(messageBytes) || {};
+      // Check if the values are defined
+      if (!pkBase58 || !msgBase58 || !sigBase58) {
+        window.showToast('Failed to generate authorization header!', 'error');
+        return;
+      }
 
       if (event.data.type === 'uploadVRM') {
         console.log('event', event);
   
         const vrmFile = event.data.data.file;
         console.log('vrmFile', vrmFile);
-  
-        // Check if the values are defined
-        if (!pkBase58 || !msgBase58 || !sigBase58) {
-          window.showToast('Failed to generate authorization header!', 'error');
-          return;
-        }
 
         const authorizationHeader = `Bearer ${pkBase58}.${msgBase58}.${sigBase58}`;
        
