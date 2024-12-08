@@ -20,7 +20,7 @@ export const OnboardPage = () => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [avatars, setAvatars] = useState<Avatar[]>([]);
-  const [selectedAvatar, setSelectedAvatar] = useState('');
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const { publicKey, signMessage } = useWallet();
 
   const handleFileChange = (e) => {
@@ -118,8 +118,13 @@ export const OnboardPage = () => {
   }, []);
 
   const handleAvatarSelect = (filename: string) => {
-    setSelectedAvatar(filename);
-    console.log('Selected Avatar Filename:', filename); // Handle selected avatar
+        // If the clicked avatar is already selected, deselect it by setting it to null
+        if (selectedAvatar === filename) {
+            setSelectedAvatar(null);
+        } else {
+            setSelectedAvatar(filename);
+        }
+        console.log('Selected Avatar Filename:', filename); // Handle selected avatar
   };
 
   return (

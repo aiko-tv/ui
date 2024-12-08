@@ -12,53 +12,16 @@ export const CreateCharacterPage = () => {
       window.removeEventListener('message', handleMessage);
     };
   }, []);
-
-
-  const debounce = (func: Function, wait: number) => {
-    let timeout: NodeJS.Timeout | null = null;
-    
-    return function executedFunction(...args: any[]) {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-      
-      timeout = setTimeout(() => {
-        func(...args);
-        timeout = null;
-      }, wait);
-    };
-  };
   
   // Then modify your handleMessage function
-  const handleMessage = debounce(async (event: MessageEvent) => {
-    
-    // Add a flag to track if the function is currently executing
-    if ((handleMessage as any).isExecuting) {
-      return;
+  const handleMessage = async (event: MessageEvent) => {
+    console.log('event', event);
+    if (event.data.status === 200) {
+      window.showToast('Avatar created!', 'success');
+    } else {
+      window.showToast('Creation failed, please try again!', 'error');
     }
-  
-    try {
-      (handleMessage as any).isExecuting = true;
-  
-      // Validate the origin to ensure the message is from the trusted iframe
-      const allowedOrigins = [`${import.meta.env.VITE_IFRAME_URL}`];
-      if (!allowedOrigins.includes(event.origin)) {
-        return;
-      }
-
-      if (event.data.type === 'uploadVRM') {
-        console.log('event', event);
-  
-        if (event.data.success === true) {
-            window.showToast('Avatar created!', 'success');
-        } else {
-            window.showToast('Creation failed, please try again!', 'error');
-        }
-      }
-    } finally {
-      (handleMessage as any).isExecuting = false;
-    }
-  }, 1000); 
+  }
 
 
   return (
