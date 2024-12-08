@@ -176,7 +176,7 @@ export const OnboardPage = () => {
                             </Link>
                             <div className="relative w-full">
                                 <div className="overflow-x-auto scrollbar-hide max-w-[290px] min-[440px]:max-w-[300px] min-[470px]:max-w-[350px] min-[490px]:max-w-[400px] min-[510px]:max-w-[450px] min-[580px]:max-w-[500px] min-[660px]:max-w-[600px]  md:max-w-[768px] lg:max-w-[1280px]">
-                                    <div className="relative flex gap-4 w-max group"> 
+                                    <div className="relative flex gap-4 w-max group">
                                     {preview ? (
                                         <div className="relative rounded-xl flex-shrink-0 w-48 h-48 bg-neutral-200 dark:bg-neutral-800 justify-center items-center flex dark:text-neutral-200 font-medium overflow-hidden">
                                             {preview}
@@ -188,27 +188,32 @@ export const OnboardPage = () => {
                                         </div>
                                     ) : (
                                     <>
-                                    {avatars.map((avatar, index) => (
-                                        <div
-                                            key={avatar._id}
-                                            className={`relative cursor-pointer border-2 rounded-xl flex-shrink-0 ${
-                                                selectedAvatar === avatar.filename ? 'border-[#fe2c55]' : 'border-transparent'
-                                            }`}
-                                            onClick={() => handleAvatarSelect(avatar.filename)}
-                                        >
-                                            <img
-                                                src={avatar.screenshot}
-                                                alt={`Avatar ${avatar.filename}`}
-                                                className="rounded-lg w-48 h-48"
-                                            />
-                                           
-                                            {index === avatars.length - 1 && (avatars.length > 5 || 'md:hidden') && (
-                                                <div className="hidden group-hover:block md:group-hover:hidden absolute -right-8 top-1/2 -translate-y-1/2">
-                                                    <FastForward size={20} />
-                                                </div>
-                                            )}
+                                    {avatars.length > 0 ? (
+                                        avatars.map((avatar, index) => (
+                                            <div
+                                                key={avatar._id}
+                                                className={`relative cursor-pointer border-2 rounded-xl flex-shrink-0 ${
+                                                    selectedAvatar === avatar.filename ? 'border-[#fe2c55]' : 'border-transparent'
+                                                }`}
+                                                onClick={() => handleAvatarSelect(avatar.filename)}
+                                            >
+                                                <img
+                                                    src={avatar.screenshot}
+                                                    alt={`Avatar ${avatar.filename}`}
+                                                    className="rounded-lg w-48 h-48"
+                                                />
+                                                {index === avatars.length - 1 && (avatars.length > 5 || 'md:hidden') && (
+                                                    <div className="hidden group-hover:block md:group-hover:hidden absolute -right-8 top-1/2 -translate-y-1/2">
+                                                        <FastForward size={20} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center text-sm p-2 dark:text-neutral-100 text-neutral-900">
+                                            No avatars found. Create a new avatar to get started.
                                         </div>
-                                    ))}
+                                    )}
                                     </>
                                     )}
                                 </div>
