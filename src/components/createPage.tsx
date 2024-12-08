@@ -49,7 +49,7 @@ export const CreateCharacterPage = () => {
       if (event.data.type === 'uploadVRM') {
         console.log('event', event);
   
-        if (event.data.data.success === true) {
+        if (event.data.success === true) {
             window.showToast('Avatar created!', 'success');
         } else {
             window.showToast('Creation failed, please try again!', 'error');
