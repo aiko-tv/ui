@@ -93,3 +93,32 @@
   opacity: 0.95;             /* Subtle opacity change */
   transform: brightness(1.1); /* Slight brightness increase */
 }
+
+/* Static Background Effect */
+@keyframes static {
+  0%, 100% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
+.bg-static {
+  background-image: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(255, 255, 255, 0.1) 2%,
+      rgba(0, 0, 0, 0.1) 4%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(0, 0, 0, 0.05) 2%
+    );
+  background-size: 200% 200%;
+  animation: static 0.2s infinite steps(2);
+  mix-blend-mode: screen;
+  opacity: 0.6;
+  z-index: 5;
+}

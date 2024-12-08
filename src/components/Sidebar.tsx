@@ -160,7 +160,7 @@ export function Sidebar() {
 
       <div className={`border-t border-gray-200 dark:border-white/10 transition-opacity duration-200 ${isCollapsed ? 'hidden' : 'block'
         }`}>
-        <Link to="/create">
+        <Link to="/onboard">
           <button className="w-full flex items-center gap-3 px-4 py-3 bg-pink-950/20 hover:bg-pink-950/30 rounded-lg transition-all duration-200">
             <div className="w-8 h-8 flex items-center justify-center overflow-hidden rounded-lg bg-pink-950/10">
               <img
