@@ -276,7 +276,7 @@ export const OnboardPage = () => {
                 <ol className="text-neutral-700 dark:text-neutral-300 list-decimal pl-5">
                     <li>Connect your wallet.</li>
                     <li>Enter your agent ID from your Eliza repo.</li>
-                    <li>Please upload a VRM file that is compatible with the Aiko platform.</li>
+                    <li>Pick an avatar, upload a custom avatar, or create a new one.</li>
                     <li>Select an environment for your agent to live in.</li>
                     <li>Submit and watch your agent come to life!</li>
                 </ol>
