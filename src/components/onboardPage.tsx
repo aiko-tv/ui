@@ -28,8 +28,9 @@ export const OnboardPage = () => {
     if (file && file.name.endsWith('.vrm')) {
       // set filename to state
       setPreview(file.name);
+      setFile(file);
     } else {
-      alert('Please upload a valid VRM file');
+      window.showToast('Please upload a valid VRM file!', 'error');
     }
   };
 
@@ -51,15 +52,6 @@ export const OnboardPage = () => {
         window.showToast('Agent ID is required and must be a valid UUID!', 'error');
         return;
     }
-    if (!file && !selectedAvatar) {
-        window.showToast('Please upload a VRM file or select an avatar!', 'error');
-        return;
-    }
-
-    if (file && !file.name.endsWith('.vrm')) { // Check for .vrm file extension
-        window.showToast('Only .vrm files are allowed!', 'error');
-        return;
-    }
 
     const action = 'vrm:post';
     const exp = Math.floor(Date.now() / 1000) + 300; // Expiration time: 5 minutes from now
@@ -70,12 +62,6 @@ export const OnboardPage = () => {
         return;
     }
     const signature = await signMessage(messageBytes);
-    // Sign the message
-    // const verifiedValue = sign.detached.verify(
-    //     messageBytes, 
-    //     signature, 
-    //     publicKey.toBytes()
-    // );
     const pkBase58 = bs58.encode(publicKey.toBytes());
     const msgBase58 = bs58.encode(messageBytes);
     const sigBase58 = bs58.encode(signature);
@@ -87,13 +73,16 @@ export const OnboardPage = () => {
     formData.append('environmentURL', environmentSetting);
 
     if (file) {
+        console.log('uploading vrm')
         formData.append('vrm', file); // Append the uploaded file
         formData.append('isUploading', 'true');
-    } else {
+    } else if (selectedAvatar) {
+        console.log('uploading avatar')
         formData.append('vrmPicked', selectedAvatar); // Append the selected avatar
         formData.append('isUploading', 'false');
     }
-    console.log(formData)
+    console.log('file', file)
+    console.log('selectedAvatar', selectedAvatar)
     try {
       const response = await axios.post(`${API_URL}/api/upload/vrm`, formData, {
         headers: {
@@ -189,7 +178,7 @@ export const OnboardPage = () => {
                                 <div className="overflow-x-auto scrollbar-hide max-w-[290px] min-[440px]:max-w-[300px] min-[470px]:max-w-[350px] min-[490px]:max-w-[400px] min-[510px]:max-w-[450px] min-[580px]:max-w-[500px] min-[660px]:max-w-[600px]  md:max-w-[768px] lg:max-w-[1280px]">
                                     <div className="relative flex gap-4 w-max group"> 
                                     {preview ? (
-                                        <div className="relative rounded-xl flex-shrink-0 w-48 h-48 bg-gray-300 justify-center items-center flex dark:text-neutral-900 font-medium">
+                                        <div className="relative rounded-xl flex-shrink-0 w-48 h-48 bg-neutral-200 dark:bg-neutral-800 justify-center items-center flex dark:text-neutral-200 font-medium overflow-hidden">
                                             {preview}
                                             <div className="absolute inset-0 bg-static"></div>
                                             <Trash2 size={20} className="absolute top-2 right-2 cursor-pointer z-10" style={{color: '#fe2c55'}} onClick={() => {
@@ -255,7 +244,7 @@ export const OnboardPage = () => {
                 </div>
                 <button 
                   type="submit" // Add a submit button
-                  className="bg-[#fe2c55] text-white p-3 rounded-lg"
+                  className="bg-[#fe2c55] text-white p-3 rounded-lg hover:bg-[#fe2c55]/95"
                 >
                   Submit
                 </button>
